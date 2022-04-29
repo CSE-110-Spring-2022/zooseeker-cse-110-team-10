@@ -7,10 +7,11 @@ import android.util.Log;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
-import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
-import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class PlanActivity extends AppCompatActivity {
 
@@ -22,14 +23,20 @@ public class PlanActivity extends AppCompatActivity {
         try {
             g = ZooData.loadZooGraphJSON(new InputStreamReader(this.getAssets().open("sample_zoo_graph.json")));
         } catch (Exception e) { return; }
-        DijkstraShortestPath gD = new DijkstraShortestPath(g);
-        ShortestPathAlgorithm.SingleSourcePaths<String, IdentifiedWeightedEdge> pathGenerator = gD.getPaths("entrance_exit_gate");
-        GraphPath<String, IdentifiedWeightedEdge> l = pathGenerator.getPath("gorillas");
-        for (String v : l.getVertexList()) {
-            Log.d("PlanActivity", "vertex %d: " + v);
-        }
-        for (IdentifiedWeightedEdge e: l.getEdgeList()) {
-            Log.d("PlanActivity", "edge %d: " + e.getId());
+        PathFinder pf = new PathFinder(g, "entrance_exit_gate", "entrance_exit_gate");
+        String[] exhibits = { "gorillas", "arctic_foxes" };
+        List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(Arrays.asList(exhibits));
+        for (GraphPath<String, IdentifiedWeightedEdge> subPath : l) {
+            Log.d("PlanActivity", "-----------");
+            Log.d("PlanActivity", String.format("distance is %f", subPath.getWeight()));
+            Iterator<String> v = subPath.getVertexList().iterator();
+            Iterator<IdentifiedWeightedEdge> e = subPath.getEdgeList().iterator();
+            Log.d("PlanActivity", "[1] vertex: " + v.next());
+            int i = 2;
+            while (e.hasNext()) {
+                Log.d("PlanActivity", String.format("[%d] edge: %s", i++, e.next().getId()));
+                Log.d("PlanActivity", String.format("[%d] vertex: %s", i++, v.next()));
+            }
         }
     }
 }

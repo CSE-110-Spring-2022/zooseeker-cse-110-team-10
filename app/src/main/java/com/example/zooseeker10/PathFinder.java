@@ -37,9 +37,8 @@ public class PathFinder {
      * @param exhibitsToVisit the IDs of exhibits to be visited in the generated path
      * @return a pretty bad shortest path
      */
-    public GraphPath<String, IdentifiedWeightedEdge> findPath(List<String> exhibitsToVisit) {
-        List<String> vertices = new ArrayList<>();
-        List<IdentifiedWeightedEdge> edges = new ArrayList<>();
+    public List<GraphPath<String, IdentifiedWeightedEdge>> findPath(List<String> exhibitsToVisit) {
+        List<GraphPath<String, IdentifiedWeightedEdge>> paths = new ArrayList<>();
 
         Set<String> unvisitedExhibits = new HashSet<>(exhibitsToVisit);
         String currVertex = entranceID;
@@ -50,8 +49,7 @@ public class PathFinder {
             GraphPath<String, IdentifiedWeightedEdge> shortestNextPath = getShortestPathInSet(currVertex, unvisitedExhibits);
 
             // Updates final path
-            vertices.addAll(shortestNextPath.getVertexList()); //TODO: make sure not double adding
-            edges.addAll(shortestNextPath.getEdgeList()); //TODO: Same as above
+            paths.add(shortestNextPath);
 
             // Traversal variables updated
             String destVertex = shortestNextPath.getEndVertex();
@@ -61,11 +59,9 @@ public class PathFinder {
         }
 
         // Traverse from current node to exit node
-        GraphPath<String, IdentifiedWeightedEdge> vertexToEndPath = gD.getPath(currVertex, exitID);
-        vertices.addAll(vertexToEndPath.getVertexList());
-        edges.addAll(vertexToEndPath.getEdgeList());
+        paths.add(gD.getPath(currVertex, exitID));
 
-        return new GraphWalk<>(graph, entranceID, exitID, vertices, edges, weight);
+        return paths;
     }
 
     /**
@@ -79,7 +75,7 @@ public class PathFinder {
             String startVertex,
             Set<String> unvisitedExhibits) {
         ShortestPathAlgorithm.SingleSourcePaths<String, IdentifiedWeightedEdge> shortestPaths = gD.getPaths(startVertex);
-        double shortestPathWeight = Integer.MIN_VALUE;
+        double shortestPathWeight = Integer.MAX_VALUE;
         String shortestPathSinkID = null;
         for (String unvisited : unvisitedExhibits) {
             double currEdgeWeight = shortestPaths.getWeight(unvisited);
