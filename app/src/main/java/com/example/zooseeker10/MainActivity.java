@@ -19,6 +19,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
+        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+
+        for (ZooData.VertexInfo vertexInfo: vertexInfoMap.values()) {
+            Log.d("MainActivity", vertexInfo.toString());
+        }
+
+
 
     }
 
