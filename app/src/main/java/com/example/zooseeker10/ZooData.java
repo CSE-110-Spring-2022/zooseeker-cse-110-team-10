@@ -2,6 +2,8 @@ package com.example.zooseeker10;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,7 +28,7 @@ public class ZooData {
             // The SerializedName annotation tells GSON how to convert
             // from the strings in our JSON to this Enum.
             @SerializedName("gate") GATE,
-            @SerializedName("exhibit") EXHIBIT, 
+            @SerializedName("exhibit") EXHIBIT,
             @SerializedName("intersection") INTERSECTION
         }
 
@@ -34,11 +36,41 @@ public class ZooData {
         public Kind kind;
         public String name;
         public List<String> tags;
+
+        public VertexInfo(String id, Kind kind, String name, List<String> tags) {
+            this.id = id;
+            this.kind = kind;
+            this.name = name;
+            this.tags = tags;
+        }
+
+        @Override
+        public String toString() {
+            return "VertexInfo{" +
+                    "id='" + id + '\'' +
+                    ", kind=" + kind +
+                    ", name='" + name + '\'' +
+                    ", tags=" + tags +
+                    '}';
+        }
     }
 
     public static class EdgeInfo {
         public String id;
         public String street;
+
+        public EdgeInfo(String id, String street) {
+            this.id = id;
+            this.street = street;
+        }
+
+        @Override
+        public String toString() {
+            return "EdgeInfo{" +
+                    "id='" + id + '\'' +
+                    ", street='" + street + '\'' +
+                    '}';
+        }
     }
 
     public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {
