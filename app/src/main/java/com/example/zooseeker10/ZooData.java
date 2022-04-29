@@ -3,6 +3,9 @@ package com.example.zooseeker10;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +14,7 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -23,6 +27,8 @@ import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.nio.json.JSONImporter;
 
 public class ZooData {
+
+    @Entity(tableName = "zoo_vertices")
     public static class VertexInfo {
         public static enum Kind {
             // The SerializedName annotation tells GSON how to convert
@@ -32,16 +38,28 @@ public class ZooData {
             @SerializedName("intersection") INTERSECTION
         }
 
+        @PrimaryKey
         public String id;
+
+        @NonNull
         public Kind kind;
+
+        @NonNull
         public String name;
+
+        @NonNull
+        public String combinedTags;
+
+        @Ignore
         public List<String> tags;
 
-        public VertexInfo(String id, Kind kind, String name, List<String> tags) {
+        public VertexInfo(@NonNull String id, @NonNull Kind kind,
+                          @NonNull String name, @NonNull List<String> tags) {
             this.id = id;
             this.kind = kind;
             this.name = name;
             this.tags = tags;
+            this.combinedTags = name.toLowerCase() + ',' + String.join(",", tags);
         }
 
         @Override
