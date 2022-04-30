@@ -1,5 +1,7 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.NonNull;
+
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
@@ -24,7 +26,7 @@ public class PathFinder {
      * @param entranceID ID of the entrance node
      * @param exitID ID of the exit node
      */
-    public PathFinder(Graph<String, IdentifiedWeightedEdge> graph, String entranceID, String exitID) {
+    public PathFinder(@NonNull Graph<String, IdentifiedWeightedEdge> graph, @NonNull String entranceID, @NonNull String exitID) {
         this.graph = graph;
         this.gD = new DijkstraShortestPath<>(graph);
         this.entranceID = entranceID;
@@ -37,7 +39,7 @@ public class PathFinder {
      * @param exhibitsToVisit the IDs of exhibits to be visited in the generated path
      * @return a pretty bad shortest path
      */
-    public List<GraphPath<String, IdentifiedWeightedEdge>> findPath(List<String> exhibitsToVisit) {
+    public List<GraphPath<String, IdentifiedWeightedEdge>> findPath(@NonNull List<String> exhibitsToVisit) {
         List<GraphPath<String, IdentifiedWeightedEdge>> paths = new ArrayList<>();
 
         Set<String> unvisitedExhibits = new HashSet<>(exhibitsToVisit);
