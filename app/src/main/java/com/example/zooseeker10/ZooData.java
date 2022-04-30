@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import androidx.room.ProvidedTypeConverter;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +33,7 @@ public class ZooData {
 
     @Entity(tableName = "zoo_vertices")
     public static class VertexInfo {
-        public static enum Kind {
+        public enum Kind {
             // The SerializedName annotation tells GSON how to convert
             // from the strings in our JSON to this Enum.
             @SerializedName("gate") GATE,
@@ -39,6 +42,7 @@ public class ZooData {
         }
 
         @PrimaryKey
+        @NonNull
         public String id;
 
         @NonNull
@@ -48,9 +52,6 @@ public class ZooData {
         public String name;
 
         @NonNull
-        public String combinedTags;
-
-        @Ignore
         public List<String> tags;
 
         public VertexInfo(@NonNull String id, @NonNull Kind kind,
@@ -59,7 +60,6 @@ public class ZooData {
             this.kind = kind;
             this.name = name;
             this.tags = tags;
-            this.combinedTags = name.toLowerCase() + ',' + String.join(",", tags);
         }
 
         @Override
