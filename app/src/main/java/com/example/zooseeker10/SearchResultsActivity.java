@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchResultsActivity extends AppCompatActivity {
-
-    private String searchQuery;
     private final String RESULT_TITLE_FORMAT = "Results with \"%s\".";
     public RecyclerView recyclerView;
 
@@ -25,21 +23,19 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
 
         Bundle extras = getIntent().getExtras();
-        this.searchQuery = extras.getString("search_query");
-
-
+        String searchQuery = extras.getString("search_query");
+        
         TextView searchQueryView = findViewById(R.id.search_query_view);
-        searchQueryView.setText(String.format(RESULT_TITLE_FORMAT, this.searchQuery));
+        searchQueryView.setText(String.format(RESULT_TITLE_FORMAT, searchQuery));
 
+        ZooDataDao zooDataDao = ZooDatabase.getSingleton(this).zooDataDao();
+        List<ZooData.VertexInfo> searchResults = zooDataDao
+                .getQuerySearch(ZooData.VertexInfo.Kind.EXHIBIT, '%' + searchQuery + '%');
         SearchResultsAdapter adapter = new SearchResultsAdapter();
-//        adapter.setHasStableIds(true);
+        adapter.setSearchResults(searchResults);
 
         recyclerView = findViewById(R.id.search_results);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
-
-        Map<String, ZooData.VertexInfo> map = ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
-        List<ZooData.VertexInfo> searchResults = new ArrayList<>(map.values());
-        adapter.setSearchResults(searchResults);
     }
 }

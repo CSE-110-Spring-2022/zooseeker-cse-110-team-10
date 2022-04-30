@@ -19,13 +19,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
-
-        for (ZooData.VertexInfo vertexInfo: vertexInfoMap.values()) {
-            Log.d("MainActivity", vertexInfo.toString());
-        }
-
-
+//        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
+//
+//        for (ZooData.VertexInfo vertexInfo: vertexInfoMap.values()) {
+//            Log.d("MainActivity", vertexInfo.toString());
+//        }
 
     }
 
@@ -33,9 +31,12 @@ public class MainActivity extends AppCompatActivity {
         EditText searchBarView = findViewById(R.id.search_bar_view);
         String searchQuery = searchBarView.getText().toString();
 
-        Intent intent = new Intent(this, SearchResultsActivity.class);
-        intent.putExtra("search_query", searchQuery);
-        startActivity(intent);
+        if (!searchQuery.isEmpty()) {
+            Intent intent = new Intent(this, SearchResultsActivity.class);
+            intent.putExtra("search_query", searchQuery);
+            startActivity(intent);
+        }
+
     }
 
 }
