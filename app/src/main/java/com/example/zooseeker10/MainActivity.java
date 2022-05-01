@@ -7,11 +7,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    List<String> selectedExhibits = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +38,21 @@ public class MainActivity extends AppCompatActivity {
         if (!searchQuery.isEmpty()) {
             Intent intent = new Intent(this, SearchResultsActivity.class);
             intent.putExtra("search_query", searchQuery);
-            startActivity(intent);
+            startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
         }
 
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                String exhibitId = data.getStringExtra("exhibitId");
+                selectedExhibits.add(exhibitId);
+                Log.d("MainActivity", exhibitId);
+            }
+        }
     }
 
 }

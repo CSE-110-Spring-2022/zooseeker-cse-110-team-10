@@ -4,14 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SearchResultsActivity extends AppCompatActivity {
     private final String RESULT_TITLE_FORMAT = "Results with \"%s\".";
@@ -33,9 +31,19 @@ public class SearchResultsActivity extends AppCompatActivity {
                 .getQuerySearch(ZooData.VertexInfo.Kind.EXHIBIT, '%' + searchQuery + '%');
         SearchResultsAdapter adapter = new SearchResultsAdapter();
         adapter.setSearchResults(searchResults);
+        adapter.setOnAddBtnClickedHandler(this::onAddExhibitClicked);
 
         recyclerView = findViewById(R.id.search_results);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+    }
+
+    public void onAddExhibitClicked(ZooData.VertexInfo exhibit) {
+        String exhibitId = exhibit.id;
+        Intent intent = getIntent();
+        Log.d("SearchResultsActivity", "new exhibit: " + exhibitId);
+        intent.putExtra("exhibitId", exhibitId);
+        setResult(RESULT_OK, intent);
+        this.finish();
     }
 }
