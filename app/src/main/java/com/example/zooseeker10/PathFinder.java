@@ -6,7 +6,6 @@ import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
-import org.jgrapht.graph.GraphWalk;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -90,4 +89,5 @@ public class PathFinder {
 
         return shortestPaths.getPath(shortestPathSinkID);
     }
+
 }

@@ -1,12 +1,11 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -14,7 +13,6 @@ import org.jgrapht.GraphPath;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 public class PlanActivity extends AppCompatActivity {
@@ -36,24 +34,25 @@ public class PlanActivity extends AppCompatActivity {
         PathFinder pf = new PathFinder(g, "entrance_exit_gate", "entrance_exit_gate");
         String[] exhibits = { "gorillas", "arctic_foxes" };
         List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(Arrays.asList(exhibits));
-        List<PlanDistItem> items = new ArrayList<>();
-
-        double totalLength = 0.0;
-        for (GraphPath<String, IdentifiedWeightedEdge> subPath : l) {
-            Log.d("PlanActivity", "-----------");
-            Log.d("PlanActivity", String.format("distance is %f", subPath.getWeight()));
-            Iterator<String> v = subPath.getVertexList().iterator();
-            Iterator<IdentifiedWeightedEdge> e = subPath.getEdgeList().iterator();
-            Log.d("PlanActivity", "[1] vertex: " + v.next());
-            int i = 2;
-            while (e.hasNext()) {
-                Log.d("PlanActivity", String.format("[%d] edge: %s", i++, e.next().getId()));
-                Log.d("PlanActivity", String.format("[%d] vertex: %s", i++, v.next()));
-            }
-            items.add(new PlanDistItem(subPath.getEndVertex(), totalLength + subPath.getWeight()));
-            totalLength += subPath.getWeight();
-        }
+        List<PlanDistItem> items = summarizePath(l);
 
         adapter.setPlanDistItems(items);
     }
+
+    /**
+     * Summarize a list of paths as PlanDistItems (exhibit name and distance)
+     *
+     * @param paths the path to summarize
+     * @return list of PlanDistItems summarizing the path
+     */
+    public static List<PlanDistItem> summarizePath(@NonNull List<GraphPath<String, IdentifiedWeightedEdge>> paths) {
+        List<PlanDistItem> items = new ArrayList<>();
+        double totalLength = 0.0;
+        for (GraphPath<String, IdentifiedWeightedEdge> subPath : paths) {
+            items.add(new PlanDistItem(subPath.getEndVertex(), totalLength + subPath.getWeight()));
+            totalLength += subPath.getWeight();
+        }
+        return items;
+    }
+
 }
