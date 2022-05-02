@@ -50,14 +50,18 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String exhibitId = data.getStringExtra("exhibitId");
-                if (selectedExhibits.isEmpty()) {
-                    planButton.setVisibility(View.VISIBLE);
-                }
-                if (!selectedExhibits.contains(exhibitId)) {
-                    selectedExhibits.add(exhibitId);
-                    Log.d("MainActivity", exhibitId);
-                }
+                selectExhibit(exhibitId);
             }
+        }
+    }
+
+    public void selectExhibit(String exhibitId) {
+        if (selectedExhibits.isEmpty()) {
+            planButton.setVisibility(View.VISIBLE);
+        }
+        if (!selectedExhibits.contains(exhibitId)) {
+            selectedExhibits.add(exhibitId);
+            Log.d("MainActivity", exhibitId);
         }
     }
 
