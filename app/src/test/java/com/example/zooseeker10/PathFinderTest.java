@@ -19,11 +19,6 @@ import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class PathFinderTest {
-    private static final String GRAPH_INFO_JSON_PATH = "sample_zoo_graph.json";
-    private static final String START_VERTEX_ID = "entrance_exit_gate";
-    private static final String END_VERTEX_ID = "entrance_exit_gate";
-    private static final double DOUBLE_EPSILON = 1e-15;
-
     private static PathFinder pathfinder;
 
     /**
@@ -31,9 +26,9 @@ public class PathFinderTest {
      */
     @Before
     public void setup() {
-        Graph<String, IdentifiedWeightedEdge> graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), GRAPH_INFO_JSON_PATH);
+        Graph<String, IdentifiedWeightedEdge> graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
 
-        pathfinder = new PathFinder(graph, START_VERTEX_ID, END_VERTEX_ID);
+        pathfinder = new PathFinder(graph, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
     }
 
     public void checkPathSanity(String tag, List<String> toVisit, List<GraphPath<String, IdentifiedWeightedEdge>> path, double maxWeight) {
@@ -46,8 +41,8 @@ public class PathFinderTest {
             assertTrue(tag + ": duplicated exhibit", vertices.contains(exhibit));
             vertices.remove(exhibit);
         }
-        assertEquals(tag + ": wrong start", START_VERTEX_ID, pathArr.get(0).getStartVertex());
-        assertEquals(tag + ": wrong end", END_VERTEX_ID, pathArr.get(pathArr.size() - 1).getEndVertex());
+        assertEquals(tag + ": wrong start", ZooData.ENTRANCE_GATE_ID, pathArr.get(0).getStartVertex());
+        assertEquals(tag + ": wrong end", ZooData.EXIT_GATE_ID, pathArr.get(pathArr.size() - 1).getEndVertex());
         double actualWeight = 0;
         for (GraphPath<String, IdentifiedWeightedEdge> subPath : path) {
             actualWeight += subPath.getWeight();

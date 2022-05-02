@@ -24,14 +24,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         planButton = this.findViewById(R.id.plan_btn);
-
-
-//        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.loadVertexInfoJSON(this, "sample_node_info.json");
-//
-//        for (ZooData.VertexInfo vertexInfo: vertexInfoMap.values()) {
-//            Log.d("MainActivity", vertexInfo.toString());
-//        }
-
     }
 
     public void onSearchButtonClicked(View view) {

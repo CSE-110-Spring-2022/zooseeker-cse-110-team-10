@@ -30,6 +30,11 @@ import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.nio.json.JSONImporter;
 
 public class ZooData {
+    public static final String ZOO_GRAPH_PATH = "sample_zoo_graph.json";
+    public static final String NODE_INFO_PATH = "sample_node_info.json";
+    public static final String EDGE_INFO_PATH = "sample_edge_info.json";
+    public static final String ENTRANCE_GATE_ID = "entrance_exit_gate";
+    public static final String EXIT_GATE_ID = "entrance_exit_gate";
 
     @Entity(tableName = "zoo_vertices")
     public static class VertexInfo {

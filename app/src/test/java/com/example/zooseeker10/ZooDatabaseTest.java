@@ -45,7 +45,7 @@ public class ZooDatabaseTest {
     private void fillDatabase() {
         Context context = ApplicationProvider.getApplicationContext();
 
-        Map<String, ZooData.VertexInfo> map = ZooData.loadVertexInfoJSON(context, "sample_node_info.json");
+        Map<String, ZooData.VertexInfo> map = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
         List<ZooData.VertexInfo> vertices = new ArrayList<>(map.values());
 
         dao.insertAll(vertices);

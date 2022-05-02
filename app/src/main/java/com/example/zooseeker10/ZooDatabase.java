@@ -37,7 +37,7 @@ public abstract class ZooDatabase extends RoomDatabase {
                         super.onCreate(db);
                         Executors.newSingleThreadScheduledExecutor().execute(() -> {
                             Map<String, ZooData.VertexInfo> map
-                                    = ZooData.loadVertexInfoJSON(context, "sample_node_info.json");
+                                    = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
                             List<ZooData.VertexInfo> vertices = new ArrayList<>(map.values());
                             getSingleton(context).zooDataDao().insertAll(vertices);
                         });

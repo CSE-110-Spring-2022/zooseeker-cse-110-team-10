@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class PlanActivity extends AppCompatActivity {
 
@@ -30,13 +33,13 @@ public class PlanActivity extends AppCompatActivity {
 
         Graph<String, IdentifiedWeightedEdge> g;
         try {
-            g = ZooData.loadZooGraphJSON(this, "sample_zoo_graph.json");
+            g = ZooData.loadZooGraphJSON(this, ZooData.ZOO_GRAPH_PATH);
         } catch (Exception e) { return; }
-        PathFinder pf = new PathFinder(g, "entrance_exit_gate", "entrance_exit_gate");
+        PathFinder pf = new PathFinder(g, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
         Intent intent = getIntent();
         ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
         List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(exhibits);
-        List<PlanDistItem> items = summarizePath(l);
+        List<PlanDistItem> items = summarizePath(this, l);
 
         adapter.setPlanDistItems(items);
     }
@@ -47,11 +50,14 @@ public class PlanActivity extends AppCompatActivity {
      * @param paths the path to summarize
      * @return list of PlanDistItems summarizing the path
      */
-    public static List<PlanDistItem> summarizePath(@NonNull List<GraphPath<String, IdentifiedWeightedEdge>> paths) {
+    public static List<PlanDistItem> summarizePath(Context context, @NonNull List<GraphPath<String, IdentifiedWeightedEdge>> paths) {
         List<PlanDistItem> items = new ArrayList<>();
         double totalLength = 0.0;
         for (GraphPath<String, IdentifiedWeightedEdge> subPath : paths) {
-            items.add(new PlanDistItem(subPath.getEndVertex(), totalLength + subPath.getWeight()));
+            String endVertexId = subPath.getEndVertex();
+            Map<String, ZooData.VertexInfo> map = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
+            String exhibitName = map.get(endVertexId).name;
+            items.add(new PlanDistItem(exhibitName, totalLength + subPath.getWeight()));
             totalLength += subPath.getWeight();
         }
         return items;

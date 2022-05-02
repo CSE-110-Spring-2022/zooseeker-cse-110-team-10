@@ -20,8 +20,6 @@ import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
 public class SummarizePathTest {
-    private static final String GRAPH_INFO_JSON_PATH = "sample_zoo_graph.json";
-
     private static Graph<String, IdentifiedWeightedEdge> graph;
 
     /**
@@ -29,7 +27,7 @@ public class SummarizePathTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), GRAPH_INFO_JSON_PATH);
+        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
     }
 
     class SimpleTester {
@@ -62,7 +60,7 @@ public class SummarizePathTest {
         }
 
         public void run() {
-            List<PlanDistItem> actualItems = PlanActivity.summarizePath(paths);
+            List<PlanDistItem> actualItems = PlanActivity.summarizePath(ApplicationProvider.getApplicationContext(), paths);
             assertEquals(tag + " wrong number of items", items.size(), actualItems.size());
             for (int i = 0; i < items.size(); i++) {
                 assertEquals(tag + " wrong exhibit", items.get(i).exhibitName, actualItems.get(i).exhibitName);
@@ -76,7 +74,7 @@ public class SummarizePathTest {
         new SimpleTester("zero exhibit")
                 .planVertex("entrance_exit_gate")
                 .planPath(0.0)
-                .expectItem("entrance_exit_gate", 0.0)
+                .expectItem("Entrance and Exit Gate", 0.0)
                 .run();
     }
 
@@ -87,12 +85,12 @@ public class SummarizePathTest {
                 .planVertex("entrance_plaza")
                 .planVertex("gorillas")
                 .planPath(210.0)
-                .expectItem("gorillas", 210.0)
+                .expectItem("Gorillas", 210.0)
                 .planVertex("gorillas")
                 .planVertex("entrance_plaza")
                 .planVertex("entrance_exit_gate")
                 .planPath(210.0)
-                .expectItem("entrance_exit_gate", 420.0)
+                .expectItem("Entrance and Exit Gate", 420.0)
                 .run();
     }
 
@@ -103,20 +101,20 @@ public class SummarizePathTest {
                 .planVertex("entrance_plaza")
                 .planVertex("gorillas")
                 .planPath(210.0)
-                .expectItem("gorillas", 210.0)
+                .expectItem("Gorillas", 210.0)
                 .planVertex("gorillas")
                 .planVertex("lions")
                 .planPath(200.0)
-                .expectItem("lions", 410.0)
+                .expectItem("Lions", 410.0)
                 .planVertex("lions")
                 .planVertex("gators")
                 .planPath(200.0)
-                .expectItem("gators", 610.0)
+                .expectItem("Alligators", 610.0)
                 .planVertex("gators")
                 .planVertex("entrance_plaza")
                 .planVertex("entrance_exit_gate")
                 .planPath(110.0)
-                .expectItem("entrance_exit_gate", 720.0)
+                .expectItem("Entrance and Exit Gate", 720.0)
                 .run();
     }
 }
