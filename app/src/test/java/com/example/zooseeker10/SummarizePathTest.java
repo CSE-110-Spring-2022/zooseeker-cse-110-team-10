@@ -2,11 +2,15 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.*;
 
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 import org.jgrapht.graph.GraphWalk;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +18,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+@RunWith(AndroidJUnit4.class)
 public class SummarizePathTest {
     private static final String GRAPH_INFO_JSON_PATH = "sample_zoo_graph.json";
 
@@ -24,9 +29,7 @@ public class SummarizePathTest {
      */
     @Before
     public void setup() {
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(GRAPH_INFO_JSON_PATH);
-        Reader reader = new InputStreamReader(inputStream);
-        graph = ZooData.loadZooGraphJSON(reader);
+        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), GRAPH_INFO_JSON_PATH);
     }
 
     class SimpleTester {
