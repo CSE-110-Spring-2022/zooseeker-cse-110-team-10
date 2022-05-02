@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import org.jgrapht.Graph;
@@ -29,11 +30,12 @@ public class PlanActivity extends AppCompatActivity {
 
         Graph<String, IdentifiedWeightedEdge> g;
         try {
-            g = ZooData.loadZooGraphJSON(new InputStreamReader(this.getAssets().open("sample_zoo_graph.json")));
+            g = ZooData.loadZooGraphJSON(this, "sample_zoo_graph.json");
         } catch (Exception e) { return; }
         PathFinder pf = new PathFinder(g, "entrance_exit_gate", "entrance_exit_gate");
-        String[] exhibits = { "gorillas", "arctic_foxes" };
-        List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(Arrays.asList(exhibits));
+        Intent intent = getIntent();
+        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
+        List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(exhibits);
         List<PlanDistItem> items = summarizePath(l);
 
         adapter.setPlanDistItems(items);
