@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class PlanActivity extends AppCompatActivity {
+
+    List<GraphPath<String, IdentifiedWeightedEdge>> paths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +44,10 @@ public class PlanActivity extends AppCompatActivity {
         PathFinder pf = new PathFinder(g, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
         Intent intent = getIntent();
         ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
-        List<GraphPath<String, IdentifiedWeightedEdge>> l = pf.findPath(exhibits);
-        List<PlanDistItem> items = summarizePath(this, l);
+        paths = pf.findPath(exhibits);
+        List<PlanDistItem> items = summarizePath(this, paths);
         adapter.setPlanDistItems(items);
 
-        List<List<String>> pathIDs = getPathIDs(l);
-        Gson gson = new Gson();
-        Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
-        String pathsSerialized = gson.toJson(pathIDs, pathIDsType);
-        Log.d("PlanActivity", pathsSerialized);
     }
 
     /**
@@ -68,6 +66,7 @@ public class PlanActivity extends AppCompatActivity {
             items.add(new PlanDistItem(exhibitName, totalLength + subPath.getWeight()));
             totalLength += subPath.getWeight();
         }
+
         return items;
     }
 
@@ -93,4 +92,14 @@ public class PlanActivity extends AppCompatActivity {
         return pathIDs;
     }
 
+    public void onDirectionsBtnClicked(View view) {
+        Intent intent = new Intent(this, DirectionsActivity.class);
+        List<List<String>> pathIDs = getPathIDs(paths);
+        Gson gson = new Gson();
+        Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
+        String pathsSerialized = gson.toJson(pathIDs, pathIDsType);
+        Log.d("PlanActivity", pathsSerialized);
+        intent.putExtra("paths", pathsSerialized);
+        startActivity(intent);
+    }
 }
