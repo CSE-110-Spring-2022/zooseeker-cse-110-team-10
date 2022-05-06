@@ -13,9 +13,9 @@ import java.util.List;
 
 public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAdapter.ViewHolder> {
 
-    public List<String> directionsItems = Collections.emptyList();
+    public List<DirectionsItem> directionsItems = Collections.emptyList();
 
-    public void setDirectionsItems(List<String> directionsItems) {
+    public void setDirectionsItems(List<DirectionsItem> directionsItems) {
         this.directionsItems.clear();
         this.directionsItems = directionsItems;
         notifyDataSetChanged();
@@ -41,21 +41,30 @@ public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final TextView directions;
-        private String item;
+        private final TextView fromText;
+        private final TextView toText;
+        private final TextView alongText;
+        private final TextView distanceText;
+        private DirectionsItem item;
 
         public ViewHolder(@NonNull View view) {
             super(view);
-            this.directions = view.findViewById(R.id.directions);
+            this.fromText = view.findViewById(R.id.directions_from_text);
+            this.toText = view.findViewById(R.id.directions_to_text);
+            this.alongText = view.findViewById(R.id.directions_along_text);
+            this.distanceText = view.findViewById(R.id.directions_distance_text);
         }
 
-        public String getDirectionsItem() {
+        public DirectionsItem getDirectionsItem() {
             return item;
         }
 
-        public void setDirectionsItem(String item) {
+        public void setDirectionsItem(DirectionsItem item) {
             this.item = item;
-            this.directions.setText(this.item);
+            this.fromText.setText(String.format("From %s", this.item.from));
+            this.alongText.setText(String.format("Along %s", this.item.street));
+            this.toText.setText(String.format("To %s", this.item.to));
+            this.distanceText.setText(String.format("%s ft", this.item.dist));
         }
     }
 }
