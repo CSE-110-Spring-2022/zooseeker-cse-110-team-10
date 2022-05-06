@@ -42,7 +42,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         TextView directionsTitle = findViewById(R.id.directions_title);
         Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
-        directionsTitle.setText(String.format("Directions to %s", vertexInfo.get(path.get(path.size() - 1)).name));
+        directionsTitle.setText(String.format("Directions from %s\nto %s", vertexInfo.get(path.get(0)).name, vertexInfo.get(path.get(path.size() - 1)).name));
     }
 
     public List<DirectionsItem> explainPath(List<String> path) {
