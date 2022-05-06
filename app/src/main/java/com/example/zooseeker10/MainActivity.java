@@ -60,5 +60,4 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", exhibitId);
         }
     }
-
 }
