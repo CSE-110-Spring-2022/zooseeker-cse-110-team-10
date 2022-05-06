@@ -1,6 +1,8 @@
 package com.example.zooseeker10;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,16 +29,24 @@ public class DirectionsActivity extends AppCompatActivity {
         Gson gson = new Gson();
         Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
         List<List<String>> paths = gson.fromJson(intent.getStringExtra("paths"), pathIDsType);
+        List<String> displayedDirections = new ArrayList<>();
+        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
         for (List<String> path : paths) {
-            explainPath(path);
+            displayedDirections.add("Directions to " + vertexInfo.get(path.get(path.size() - 1)).name);
+            displayedDirections.addAll(explainPath(path));
         }
+
+        DirectionsListAdapter adapter = new DirectionsListAdapter();
+        RecyclerView recyclerView = findViewById(R.id.directions_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+        adapter.setDirectionsItems(displayedDirections);
     }
 
     public List<String> explainPath(List<String> path) {
         Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
         Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.loadEdgeInfoJSON(this, ZooData.EDGE_INFO_PATH);
         Graph<String, IdentifiedWeightedEdge> g = ZooData.loadZooGraphJSON(this, ZooData.ZOO_GRAPH_PATH);
-        Log.d("DirectionsActivity", "directions to: " + path.get(path.size() - 1));
         List<String> explains = new ArrayList<>();
         Iterator<String> parts = path.iterator();
         String lastVertex = parts.next();
@@ -52,7 +62,6 @@ public class DirectionsActivity extends AppCompatActivity {
 
                     );
             explains.add(explain);
-            Log.d("DirectionsActivity", explain);
             lastVertex = nextVertex;
         }
         return explains;
