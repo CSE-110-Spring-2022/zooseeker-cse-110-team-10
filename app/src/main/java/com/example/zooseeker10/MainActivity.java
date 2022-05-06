@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("search_query", searchQuery);
             startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
         }
-
     }
 
     public void onPlanButtonClicked(View view) {
