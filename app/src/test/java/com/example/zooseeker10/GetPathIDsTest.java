@@ -1,6 +1,6 @@
 package com.example.zooseeker10;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
-public class SummarizePathTest {
+public class GetPathIDsTest {
     private static Graph<String, IdentifiedWeightedEdge> graph;
 
     /**
@@ -31,13 +31,15 @@ public class SummarizePathTest {
         String tag;
         List<GraphPath<String, IdentifiedWeightedEdge>> paths;
         List<String> pathWksp;
-        List<PlanDistItem> items;
+        List<List<String>> expect;
+        List<String> expectWksp;
 
         public SimpleTester(String tag) {
             this.tag = tag;
             paths = new ArrayList<>();
-            items = new ArrayList<>();
             pathWksp = new ArrayList<>();
+            expect = new ArrayList<>();
+            expectWksp = new ArrayList<>();
         }
 
         public SimpleTester planVertex(String v) {
@@ -45,24 +47,22 @@ public class SummarizePathTest {
             return this;
         }
 
-        public SimpleTester planPath(double dist) {
-            paths.add(new GraphWalk<>(graph, pathWksp, dist));
-            pathWksp = new ArrayList<>();
+        public SimpleTester expectID(String id) {
+            expectWksp.add(id);
             return this;
         }
 
-        public SimpleTester expectItem(String expectExhibit, double expectDistance) {
-            items.add(new PlanDistItem(expectExhibit, expectDistance));
+        public SimpleTester finishPath() {
+            paths.add(new GraphWalk<>(graph, pathWksp, 0.0));
+            pathWksp = new ArrayList<>();
+            expect.add(expectWksp);
+            expectWksp = new ArrayList<>();
             return this;
         }
 
         public void run() {
-            List<PlanDistItem> actualItems = PlanActivity.summarizePath(ApplicationProvider.getApplicationContext(), paths);
-            assertEquals(tag + " wrong number of items", items.size(), actualItems.size());
-            for (int i = 0; i < items.size(); i++) {
-                assertEquals(tag + " wrong exhibit", items.get(i).exhibitName, actualItems.get(i).exhibitName);
-                assertEquals(tag + " wrong distance", items.get(i).distance, actualItems.get(i).distance, 1e-7);
-            }
+            List<List<String>> actualIDs = PlanActivity.getPathIDs(paths);
+            assertEquals(tag, expect, actualIDs);
         }
     }
 
@@ -70,8 +70,8 @@ public class SummarizePathTest {
     public void testNoExhibts() {
         new SimpleTester("zero exhibit")
                 .planVertex("entrance_exit_gate")
-                .planPath(0.0)
-                .expectItem("Entrance and Exit Gate", 0.0)
+                .expectID("entrance_exit_gate")
+                .finishPath()
                 .run();
     }
 
@@ -81,13 +81,21 @@ public class SummarizePathTest {
                 .planVertex("entrance_exit_gate")
                 .planVertex("entrance_plaza")
                 .planVertex("gorillas")
-                .planPath(210.0)
-                .expectItem("Gorillas", 210.0)
+                .expectID("entrance_exit_gate")
+                .expectID("edge-0")
+                .expectID("entrance_plaza")
+                .expectID("edge-1")
+                .expectID("gorillas")
+                .finishPath()
                 .planVertex("gorillas")
                 .planVertex("entrance_plaza")
                 .planVertex("entrance_exit_gate")
-                .planPath(210.0)
-                .expectItem("Entrance and Exit Gate", 420.0)
+                .expectID("gorillas")
+                .expectID("edge-1")
+                .expectID("entrance_plaza")
+                .expectID("edge-0")
+                .expectID("entrance_exit_gate")
+                .finishPath()
                 .run();
     }
 
@@ -97,21 +105,33 @@ public class SummarizePathTest {
                 .planVertex("entrance_exit_gate")
                 .planVertex("entrance_plaza")
                 .planVertex("gorillas")
-                .planPath(210.0)
-                .expectItem("Gorillas", 210.0)
+                .expectID("entrance_exit_gate")
+                .expectID("edge-0")
+                .expectID("entrance_plaza")
+                .expectID("edge-1")
+                .expectID("gorillas")
+                .finishPath()
                 .planVertex("gorillas")
                 .planVertex("lions")
-                .planPath(200.0)
-                .expectItem("Lions", 410.0)
+                .expectID("gorillas")
+                .expectID("edge-2")
+                .expectID("lions")
+                .finishPath()
                 .planVertex("lions")
                 .planVertex("gators")
-                .planPath(200.0)
-                .expectItem("Alligators", 610.0)
+                .expectID("lions")
+                .expectID("edge-6")
+                .expectID("gators")
+                .finishPath()
                 .planVertex("gators")
                 .planVertex("entrance_plaza")
                 .planVertex("entrance_exit_gate")
-                .planPath(110.0)
-                .expectItem("Entrance and Exit Gate", 720.0)
+                .expectID("gators")
+                .expectID("edge-5")
+                .expectID("entrance_plaza")
+                .expectID("edge-0")
+                .expectID("entrance_exit_gate")
+                .finishPath()
                 .run();
     }
 }
