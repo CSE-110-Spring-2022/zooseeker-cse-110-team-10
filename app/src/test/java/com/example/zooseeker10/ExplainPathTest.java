@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -38,10 +39,36 @@ public class ExplainPathTest {
         assertEquals("Number of explanations incorrect", 1, explainedPath.size());
 
         DirectionsItem directions = explainedPath.get(0);
+        String currExhibitID = path.get(0);
+        String streetID = path.get(1);
+        String nextExhibitID = path.get(2);
 
-        assertEquals("Starting location incorrect", vertexInfo.get(path.get(0)).name, directions.from);
-        assertEquals("Ending location incorrect", vertexInfo.get(path.get(2)).name, directions.to);
-        assertEquals("Street name incorrect", edgeInfo.get(path.get(1)).street, directions.street);
-        assertEquals("Weight incorrect", g.getEdgeWeight(g.getEdge(path.get(0), path.get(2))), directions.dist, DOUBLE_EPSILON);
+        assertEquals("Starting location incorrect", vertexInfo.get(currExhibitID).name, directions.from);
+        assertEquals("Ending location incorrect", vertexInfo.get(nextExhibitID).name, directions.to);
+        assertEquals("Street name incorrect", edgeInfo.get(streetID).street, directions.street);
+        assertEquals("Weight incorrect", g.getEdgeWeight(g.getEdge(currExhibitID, nextExhibitID)), directions.dist, DOUBLE_EPSILON);
+    }
+
+    @Test
+    public void explainPath_multipleEdges() {
+        path = new ArrayList<>(Arrays.asList("entrance_exit_gate", "edge-0", "entrance_plaza",
+                                             "edge-5", "gators", "edge-6", "lions"));
+        List<DirectionsItem> explainedPath = PathFinder.explainPath(ApplicationProvider.getApplicationContext(), path);
+        assertEquals("Number of explanations incorrect", 3, explainedPath.size());
+
+        Iterator<String> pathIter = path.iterator();
+        String nextExhibitID = pathIter.next();
+        String currExhibitID, streetID;
+
+        for (DirectionsItem directions : explainedPath) {
+            currExhibitID = nextExhibitID;
+            streetID = pathIter.next();
+            nextExhibitID = pathIter.next();
+
+            assertEquals("Starting location incorrect", vertexInfo.get(currExhibitID).name, directions.from);
+            assertEquals("Ending location incorrect", vertexInfo.get(nextExhibitID).name, directions.to);
+            assertEquals("Street name incorrect", edgeInfo.get(streetID).street, directions.street);
+            assertEquals("Weight incorrect", g.getEdgeWeight(g.getEdge(currExhibitID, nextExhibitID)), directions.dist, DOUBLE_EPSILON);
+        }
     }
 }
