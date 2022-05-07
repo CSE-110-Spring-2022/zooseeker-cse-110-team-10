@@ -1,5 +1,6 @@
 package com.example.zooseeker10;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 
 import org.jgrapht.Graph;
@@ -9,7 +10,9 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class PathFinder {
@@ -90,4 +93,25 @@ public class PathFinder {
         return shortestPaths.getPath(shortestPathSinkID);
     }
 
+    public static List<DirectionsItem> explainPath(Context context, List<String> path) {
+        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
+        Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.loadEdgeInfoJSON(context, ZooData.EDGE_INFO_PATH);
+        Graph<String, IdentifiedWeightedEdge> g = ZooData.loadZooGraphJSON(context, ZooData.ZOO_GRAPH_PATH);
+        List<DirectionsItem> explains = new ArrayList<>();
+        Iterator<String> parts = path.iterator();
+        String lastVertex = parts.next();
+        while (parts.hasNext()) {
+            String nextEdge = parts.next();
+            String nextVertex = parts.next();
+            DirectionsItem explain = new DirectionsItem(
+                    vertexInfo.get(lastVertex).name,
+                    vertexInfo.get(nextVertex).name,
+                    edgeInfo.get(nextEdge).street,
+                    g.getEdgeWeight(g.getEdge(lastVertex, nextVertex))
+            );
+            explains.add(explain);
+            lastVertex = nextVertex;
+        }
+        return explains;
+    }
 }
