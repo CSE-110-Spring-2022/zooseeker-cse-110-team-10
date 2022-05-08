@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +19,14 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
+    List<List<String>> paths;
+    Button previousButton;
+    Button nextButton;
+    TextView directionsTitle;
+    DirectionsListAdapter dLAdapter;
+    Map<String, ZooData.VertexInfo> vertexInfo;
+    int currentPage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,71 +34,51 @@ public class DirectionsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Gson gson = new Gson();
         Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
-        List<List<String>> paths = gson.fromJson(intent.getStringExtra("paths"), pathIDsType);
+        paths = gson.fromJson(intent.getStringExtra("paths"), pathIDsType);
 
-        // Really scuffed
-        final int[] indexArr = {0};
-        final Context[] contextArr = {this};
+        vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
 
-        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
-
-        Button previousButton = findViewById(R.id.directions_previousButton);
-        Button nextButton = findViewById(R.id.directions_nextButton);
+        previousButton = findViewById(R.id.directions_previousButton);
+        nextButton = findViewById(R.id.directions_nextButton);
 
         // Setup for views with text
-        DirectionsListAdapter adapter = new DirectionsListAdapter();
+        dLAdapter = new DirectionsListAdapter();
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        TextView directionsTitle = findViewById(R.id.directions_title);
+        recyclerView.setAdapter(dLAdapter);
+        directionsTitle = findViewById(R.id.directions_title);
 
         // Loads up initial page
-        List<String> initialPath = paths.get(0);
-        adapter.setDirectionsItems(PathFinder.explainPath(this, initialPath));
+        setDirectionsPage(0);
+
+        previousButton.setOnClickListener(
+                view -> { setDirectionsPage(currentPage - 1); }
+        );
+
+        nextButton.setOnClickListener(
+                view -> { setDirectionsPage(currentPage + 1); }
+        );
+
+    }
+
+    public void setDirectionsPage(int newPage) {
+
+        if (newPage == 0) {
+            previousButton.setVisibility(View.INVISIBLE);
+        } else {
+            previousButton.setVisibility(View.VISIBLE);
+        }
+        if (newPage == paths.size() - 1) {
+            nextButton.setVisibility(View.INVISIBLE);
+        } else {
+            nextButton.setVisibility(View.VISIBLE);
+        }
+        List<String> path = paths.get(newPage);
+        List<DirectionsItem> displayedDirections = PathFinder.explainPath(this, path);
+        dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s\nto %s",
-                                vertexInfo.get(initialPath.get(0)).name,
-                                vertexInfo.get(initialPath.get(initialPath.size() - 1)).name));
-
-        previousButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int currentIndex = --indexArr[0];
-
-                nextButton.setVisibility(View.VISIBLE);
-                nextButton.setClickable(true);
-                if (currentIndex == 0) {
-                    previousButton.setVisibility(View.INVISIBLE);
-                    previousButton.setClickable(false);
-                }
-
-                List<String> path = paths.get(currentIndex);
-                List<DirectionsItem> displayedDirections = PathFinder.explainPath(contextArr[0], path);
-                adapter.setDirectionsItems(displayedDirections);
-                directionsTitle.setText(String.format("Directions from %s\nto %s",
-                                        vertexInfo.get(path.get(0)).name,
-                                        vertexInfo.get(path.get(path.size() - 1)).name));
-            }
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int currentIndex = ++indexArr[0];
-
-                previousButton.setVisibility(View.VISIBLE);
-                previousButton.setClickable(true);
-                if (currentIndex >= paths.size() - 1) {
-                    nextButton.setVisibility(View.INVISIBLE);
-                    nextButton.setClickable(false);
-                }
-
-                List<String> path = paths.get(currentIndex);
-                List<DirectionsItem> displayedDirections = PathFinder.explainPath(contextArr[0], path);
-                adapter.setDirectionsItems(displayedDirections);
-                directionsTitle.setText(String.format("Directions from %s\nto %s",
-                                        vertexInfo.get(path.get(0)).name,
-                                        vertexInfo.get(path.get(path.size() - 1)).name));
-            }
-        });
+                vertexInfo.get(path.get(0)).name,
+                vertexInfo.get(path.get(path.size() - 1)).name));
+        currentPage = newPage;
     }
 }
