@@ -72,6 +72,8 @@ public class DirectionsNavTest {
             assertEquals("Sharp Teeth Shortcut", a.getItemAt(2).street);
             assertEquals("Lions", a.getItemAt(2).to);
             assertEquals(200.0, a.getItemAt(2).dist, 1e-7);
+            assertEquals(View.VISIBLE, pb.getVisibility());
+            assertEquals(View.INVISIBLE, nb.getVisibility());
         });
     }
 
