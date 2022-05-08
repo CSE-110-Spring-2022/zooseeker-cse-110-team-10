@@ -8,11 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
@@ -35,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("search_query", searchQuery);
             startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
         }
-
     }
 
     public void onPlanButtonClicked(View view) {
@@ -64,5 +60,4 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", exhibitId);
         }
     }
-
 }
