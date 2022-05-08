@@ -38,8 +38,8 @@ public class DirectionsActivity extends AppCompatActivity {
 
         vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
 
-        previousButton = findViewById(R.id.directions_previousButton);
-        nextButton = findViewById(R.id.directions_nextButton);
+        previousButton = findViewById(R.id.directions_previous_button);
+        nextButton = findViewById(R.id.directions_next_button);
 
         // Setup for views with text
         dLAdapter = new DirectionsListAdapter();
