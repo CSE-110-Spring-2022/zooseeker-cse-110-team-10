@@ -21,6 +21,15 @@ public interface ZooDataDao {
     @Query("SELECT * FROM `zoo_vertices` ORDER BY `name`")
     List<ZooData.VertexInfo> getAll();
 
+    /**
+     * Citation:
+     * https://www.sqlitetutorial.net/sqlite-like/
+     * https://www.sqltutorial.org/sql-string-functions/sql-lower/
+     * SQLite LIKE and SQL LOWER: Convert a String Into Lowercase
+     * May 8 2022
+     * Used a reference for how to get items with matching normalized substrings.
+     * A.S.
+     */
     @Query("SELECT * FROM `zoo_vertices` WHERE `kind`=:kind AND" +
             " (LOWER(`tags`) LIKE LOWER(:query) OR LOWER(`name`) LIKE LOWER(:query))  ORDER BY `name`")
     List<ZooData.VertexInfo> getQuerySearch(ZooData.VertexInfo.Kind kind, String query);
