@@ -36,7 +36,7 @@ public class DirectionsActivity extends AppCompatActivity {
         Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
         paths = gson.fromJson(intent.getStringExtra("paths"), pathIDsType);
 
-        vertexInfo = ZooData.loadVertexInfoJSON(this, ZooData.NODE_INFO_PATH);
+        vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
@@ -76,7 +76,7 @@ public class DirectionsActivity extends AppCompatActivity {
         List<String> path = paths.get(newPage);
         List<DirectionsItem> displayedDirections = PathFinder.explainPath(this, path);
         dLAdapter.setDirectionsItems(displayedDirections);
-        directionsTitle.setText(String.format("Directions from %s\nto %s",
+        directionsTitle.setText(String.format("Directions from %s to %s",
                 vertexInfo.get(path.get(0)).name,
                 vertexInfo.get(path.get(path.size() - 1)).name));
         currentPage = newPage;

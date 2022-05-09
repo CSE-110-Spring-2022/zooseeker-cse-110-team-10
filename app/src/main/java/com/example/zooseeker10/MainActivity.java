@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
 
-    private ArrayList<String> selectedExhibitIds = new ArrayList<>();
+    public ArrayList<String> selectedExhibitIds = new ArrayList<>();
     private RecyclerView recyclerView;
     private Button planButton;
     private EditText searchBarView;
@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new SelectedExhibitsAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        Intent intent = new Intent(this, SearchResultsActivity.class);
+        intent.putExtra("dummy", true);
+        startActivity(intent);
     }
 
     public void onSearchButtonClicked(View view) {
@@ -49,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
         if (!searchQuery.isEmpty()) {
             Intent intent = new Intent(this, SearchResultsActivity.class);
             intent.putExtra("search_query", searchQuery);
+            /**
+             * Citation:
+             * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+             * Sending the data back to main activity in android
+             * May 8th, 2022
+             * Used mainly for information on getting a result back from search activity but used a method startActivityForResult as an outline
+             * D.J
+             */
             startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
         }
     }
@@ -61,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /**
+         * Citation:
+         * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+         * Sending the data back to main activity in android
+         * May 8th, 2022
+         * Used mainly for information on getting a result back from search activity but used a method startActivityForResult as an outline
+         * D.J
+         */
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {

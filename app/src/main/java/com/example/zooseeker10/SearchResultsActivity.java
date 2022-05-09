@@ -21,6 +21,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
 
         Bundle extras = getIntent().getExtras();
+        if (extras.containsKey("dummy")) {
+            ZooDatabase.getSingleton(this);
+            this.finish();
+        }
         String searchQuery = extras.getString("search_query");
         
         TextView searchQueryView = findViewById(R.id.search_query_view);
@@ -42,6 +46,14 @@ public class SearchResultsActivity extends AppCompatActivity {
         String exhibitId = exhibit.id;
         Intent intent = getIntent();
         Log.d("SearchResultsActivity", "new exhibit: " + exhibitId);
+        /**
+         * Citation:
+         * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+         * Sending the data back to main activity in android
+         * May 8th, 2022
+         * Used mainly for information on getting a result back from search activity but used a method startActivityForResult as an outline
+         * D.J
+         */
         intent.putExtra("exhibitId", exhibitId);
         setResult(RESULT_OK, intent);
         this.finish();
