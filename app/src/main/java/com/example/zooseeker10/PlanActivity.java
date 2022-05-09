@@ -61,7 +61,7 @@ public class PlanActivity extends AppCompatActivity {
         double totalLength = 0.0;
         for (GraphPath<String, IdentifiedWeightedEdge> subPath : paths) {
             String endVertexId = subPath.getEndVertex();
-            Map<String, ZooData.VertexInfo> map = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
+            Map<String, ZooData.VertexInfo> map = ZooData.getVertexInfo(context);
             String exhibitName = map.get(endVertexId).name;
             items.add(new PlanDistItem(exhibitName, totalLength + subPath.getWeight()));
             totalLength += subPath.getWeight();

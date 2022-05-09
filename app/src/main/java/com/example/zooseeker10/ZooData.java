@@ -4,11 +4,7 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.ProvidedTypeConverter;
-import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,7 +13,6 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -36,9 +31,9 @@ public class ZooData {
     public static final String ENTRANCE_GATE_ID = "entrance_exit_gate";
     public static final String EXIT_GATE_ID = "entrance_exit_gate";
 
-    private static Map<String, VertexInfo> vertexInfoCache;
-    private static Map<String, EdgeInfo> edgeInfoCache;
-    private static Graph<String, IdentifiedWeightedEdge> zooGraphCache;
+    private static Map<String, VertexInfo> vertexInfo;
+    private static Map<String, EdgeInfo> edgeInfo;
+    private static Graph<String, IdentifiedWeightedEdge> zooGraph;
 
     @Entity(tableName = "zoo_vertices")
     public static class VertexInfo {
@@ -100,10 +95,14 @@ public class ZooData {
         }
     }
 
-    public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {
-        if (vertexInfoCache != null) {
-            return vertexInfoCache;
+    public static Map<String, ZooData.VertexInfo> getVertexInfo(Context context) {
+        if (vertexInfo == null) {
+            vertexInfo = loadVertexInfoJSON(context, NODE_INFO_PATH);
         }
+        return vertexInfo;
+    }
+
+    public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open(path);
             Reader reader = new InputStreamReader(inputStream);
@@ -112,11 +111,11 @@ public class ZooData {
 
             List<ZooData.VertexInfo> zooData = gson.fromJson(reader, type);
 
-            vertexInfoCache = zooData
+            vertexInfo = zooData
                     .stream()
                     .collect(Collectors.toMap(v -> v.id, datum -> datum));
 
-            return vertexInfoCache;
+            return vertexInfo;
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyMap();
@@ -124,8 +123,8 @@ public class ZooData {
     }
 
     public static Map<String, ZooData.EdgeInfo> loadEdgeInfoJSON(Context context, String path) {
-        if (edgeInfoCache != null) {
-            return edgeInfoCache;
+        if (edgeInfo != null) {
+            return edgeInfo;
         }
         try {
             InputStream inputStream = context.getAssets().open(path);
@@ -135,11 +134,11 @@ public class ZooData {
 
             List<ZooData.EdgeInfo> zooData = gson.fromJson(reader, type);
 
-            edgeInfoCache = zooData
+            edgeInfo = zooData
                     .stream()
                     .collect(Collectors.toMap(v -> v.id, datum -> datum));
 
-            return edgeInfoCache;
+            return edgeInfo;
         } catch (IOException e) {
             e.printStackTrace();
             return Collections.emptyMap();
@@ -147,11 +146,11 @@ public class ZooData {
     }
 
     public static Graph<String, IdentifiedWeightedEdge> loadZooGraphJSON(Context context, String path) {
-        if (zooGraphCache != null) {
-            return zooGraphCache;
+        if (zooGraph != null) {
+            return zooGraph;
         }
 
-        zooGraphCache = new DefaultUndirectedWeightedGraph<>(IdentifiedWeightedEdge.class);
+        zooGraph = new DefaultUndirectedWeightedGraph<>(IdentifiedWeightedEdge.class);
 
         // Create an importer that can be used to populate our empty graph.
         JSONImporter<String, IdentifiedWeightedEdge> importer = new JSONImporter<>();
@@ -168,12 +167,12 @@ public class ZooData {
             InputStream inputStream = context.getAssets().open(path);
             Reader reader = new InputStreamReader(inputStream);
 
-            importer.importGraph(zooGraphCache, reader);
+            importer.importGraph(zooGraph, reader);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
-        return zooGraphCache;
+        return zooGraph;
     }
 }

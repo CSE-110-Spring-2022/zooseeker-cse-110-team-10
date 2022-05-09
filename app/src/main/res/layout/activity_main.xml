@@ -30,7 +30,6 @@
         android:hint="Search for exhibits..."
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/search_btn"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,12 +37,45 @@
         android:id="@+id/plan_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:onClick="onPlanButtonClicked"
         android:text="Plan"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/list_title_view"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="My List"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_view" />
+
+    <TextView
+        android:id="@+id/exhibits_count_view"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="(0)"
+        android:textSize="24sp"
+        app:layout_constraintStart_toEndOf="@+id/list_title_view"
+        app:layout_constraintTop_toBottomOf="@+id/search_bar_view" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selected_exhibits"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/plan_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/list_title_view" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
