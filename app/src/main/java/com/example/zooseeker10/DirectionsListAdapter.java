@@ -40,6 +40,11 @@ public class DirectionsListAdapter extends RecyclerView.Adapter<DirectionsListAd
         return directionsItems.size();
     }
 
+    // For testing only
+    public DirectionsItem getItemAt(int position) {
+        return directionsItems.get(position);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView fromText;
         private final TextView toText;
