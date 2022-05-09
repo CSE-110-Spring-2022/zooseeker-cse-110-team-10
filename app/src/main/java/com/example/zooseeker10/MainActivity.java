@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
 
-    private ArrayList<String> selectedExhibitIds = new ArrayList<>();
+    public ArrayList<String> selectedExhibitIds = new ArrayList<>();
     private RecyclerView recyclerView;
     private Button planButton;
     private EditText searchBarView;
