@@ -39,7 +39,7 @@ public class PlanActivity extends AppCompatActivity {
 
         Graph<String, IdentifiedWeightedEdge> g;
         try {
-            g = ZooData.loadZooGraphJSON(this, ZooData.ZOO_GRAPH_PATH);
+            g = ZooData.getZooGraph(this);
         } catch (Exception e) { return; }
         PathFinder pf = new PathFinder(g, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
         Intent intent = getIntent();

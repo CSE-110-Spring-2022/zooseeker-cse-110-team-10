@@ -122,10 +122,14 @@ public class ZooData {
         }
     }
 
-    public static Map<String, ZooData.EdgeInfo> loadEdgeInfoJSON(Context context, String path) {
-        if (edgeInfo != null) {
-            return edgeInfo;
+    public static Map<String, ZooData.EdgeInfo> getEdgeInfo(Context context) {
+        if (edgeInfo == null) {
+            edgeInfo = loadEdgeInfoJSON(context, EDGE_INFO_PATH);
         }
+        return edgeInfo;
+    }
+
+    public static Map<String, ZooData.EdgeInfo> loadEdgeInfoJSON(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open(path);
             Reader reader = new InputStreamReader(inputStream);
@@ -145,11 +149,14 @@ public class ZooData {
         }
     }
 
-    public static Graph<String, IdentifiedWeightedEdge> loadZooGraphJSON(Context context, String path) {
-        if (zooGraph != null) {
-            return zooGraph;
+    public static Graph<String, IdentifiedWeightedEdge> getZooGraph(Context context) {
+        if (zooGraph == null) {
+            zooGraph = loadZooGraphJSON(context, ZOO_GRAPH_PATH);
         }
+        return zooGraph;
+    }
 
+    public static Graph<String, IdentifiedWeightedEdge> loadZooGraphJSON(Context context, String path) {
         zooGraph = new DefaultUndirectedWeightedGraph<>(IdentifiedWeightedEdge.class);
 
         // Create an importer that can be used to populate our empty graph.

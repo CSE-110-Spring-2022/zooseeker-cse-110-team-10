@@ -94,9 +94,9 @@ public class PathFinder {
     }
 
     public static List<DirectionsItem> explainPath(Context context, List<String> path) {
-        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.loadVertexInfoJSON(context, ZooData.NODE_INFO_PATH);
-        Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.loadEdgeInfoJSON(context, ZooData.EDGE_INFO_PATH);
-        Graph<String, IdentifiedWeightedEdge> g = ZooData.loadZooGraphJSON(context, ZooData.ZOO_GRAPH_PATH);
+        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.getVertexInfo(context);
+        Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.getEdgeInfo(context);
+        Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(context);
         List<DirectionsItem> explains = new ArrayList<>();
         Iterator<String> parts = path.iterator();
         String lastVertex = parts.next();
