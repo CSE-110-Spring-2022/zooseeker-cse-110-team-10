@@ -21,6 +21,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search_results);
 
         Bundle extras = getIntent().getExtras();
+        if (extras.containsKey("dummy")) {
+            ZooDatabase.getSingleton(this);
+            this.finish();
+        }
         String searchQuery = extras.getString("search_query");
         
         TextView searchQueryView = findViewById(R.id.search_query_view);

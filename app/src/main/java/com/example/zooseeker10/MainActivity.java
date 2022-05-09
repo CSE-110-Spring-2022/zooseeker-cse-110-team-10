@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         adapter = new SelectedExhibitsAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        Intent intent = new Intent(this, SearchResultsActivity.class);
+        intent.putExtra("dummy", true);
+        startActivity(intent);
     }
 
     public void onSearchButtonClicked(View view) {
