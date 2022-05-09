@@ -43,7 +43,7 @@ public class DirectionsNavTest {
             Button nb = activity.findViewById(R.id.directions_next_button);
             Button pb = activity.findViewById(R.id.directions_previous_button);
 
-            assertEquals("Directions from Entrance and Exit Gate\nto Arctic Foxes", t.getText());
+            assertEquals("Directions from Entrance and Exit Gate to Arctic Foxes", t.getText());
             assertEquals(2, a.getItemCount());
             assertEquals("Entrance and Exit Gate", a.getItemAt(0).from);
             assertEquals("Entrance Way", a.getItemAt(0).street);
@@ -58,7 +58,7 @@ public class DirectionsNavTest {
 
             nb.performClick();
 
-            assertEquals("Directions from Arctic Foxes\nto Lions", t.getText());
+            assertEquals("Directions from Arctic Foxes to Lions", t.getText());
             assertEquals(3, rv.getAdapter().getItemCount());
             assertEquals("Arctic Foxes", a.getItemAt(0).from);
             assertEquals("Arctic Avenue", a.getItemAt(0).street);
