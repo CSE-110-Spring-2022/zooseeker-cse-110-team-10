@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
         if (!searchQuery.isEmpty()) {
             Intent intent = new Intent(this, SearchResultsActivity.class);
             intent.putExtra("search_query", searchQuery);
+            /**
+             * Citation:
+             * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+             * Sending the data back to main activity in android
+             * May 8th, 2022
+             * Used mainly for information on getting a result back from search activity but used a method startActivityForResult as an outline
+             * D.J
+             */
             startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
         }
     }
@@ -65,6 +73,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /**
+         * Citation:
+         * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+         * Sending the data back to main activity in android
+         * May 8th, 2022
+         * Used mainly for information on getting a result back from search activity but used a method startActivityForResult as an outline
+         * D.J
+         */
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
