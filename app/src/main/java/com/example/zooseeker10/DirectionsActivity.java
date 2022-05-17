@@ -10,16 +10,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    List<List<String>> paths;
+    ZooPlan plan;
     Button previousButton;
     Button nextButton;
     TextView directionsTitle;
@@ -32,9 +28,7 @@ public class DirectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
         Intent intent = getIntent();
-        Gson gson = new Gson();
-        Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
-        paths = gson.fromJson(intent.getStringExtra("paths"), pathIDsType);
+        plan = (ZooPlan)intent.getSerializableExtra("paths");
 
         vertexInfo = ZooData.getVertexInfo(this);
 
@@ -68,17 +62,15 @@ public class DirectionsActivity extends AppCompatActivity {
         } else {
             previousButton.setVisibility(View.VISIBLE);
         }
-        if (newPage == paths.size() - 1) {
+        if (false) {
             nextButton.setVisibility(View.INVISIBLE);
         } else {
             nextButton.setVisibility(View.VISIBLE);
         }
-        List<String> path = paths.get(newPage);
-        List<DirectionsItem> displayedDirections = PathFinder.explainPath(this, path);
+        List<DirectionsItem> displayedDirections = plan.explainPath(this, newPage);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
-                vertexInfo.get(path.get(0)).name,
-                vertexInfo.get(path.get(path.size() - 1)).name));
+                "todo", "todo"));
         currentPage = newPage;
     }
 }
