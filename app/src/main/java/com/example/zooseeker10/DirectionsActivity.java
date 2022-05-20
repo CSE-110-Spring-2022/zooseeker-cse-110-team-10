@@ -15,10 +15,11 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    ZooPlan plan;
     Button previousButton;
     Button nextButton;
     TextView directionsTitle;
+
+    ZooPlan plan;
     DirectionsListAdapter dLAdapter;
     Map<String, ZooData.VertexInfo> vertexInfo;
     int currentPage;
@@ -27,20 +28,20 @@ public class DirectionsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
+
         Intent intent = getIntent();
         plan = (ZooPlan)intent.getSerializableExtra("paths");
-
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
+        RecyclerView recyclerView = findViewById(R.id.directions_list);
+        directionsTitle = findViewById(R.id.directions_title);
 
         // Setup for views with text
         dLAdapter = new DirectionsListAdapter();
-        RecyclerView recyclerView = findViewById(R.id.directions_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(dLAdapter);
-        directionsTitle = findViewById(R.id.directions_title);
 
         // Loads up initial page
         setDirectionsPage(0);
@@ -62,7 +63,7 @@ public class DirectionsActivity extends AppCompatActivity {
         } else {
             previousButton.setVisibility(View.VISIBLE);
         }
-        if (false) {
+        if (newPage == plan.size() - 1) {
             nextButton.setVisibility(View.INVISIBLE);
         } else {
             nextButton.setVisibility(View.VISIBLE);
@@ -70,7 +71,9 @@ public class DirectionsActivity extends AppCompatActivity {
         List<DirectionsItem> displayedDirections = plan.explainPath(this, newPage);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
-                "todo", "todo"));
+                displayedDirections.get(0).from,
+                displayedDirections.get(displayedDirections.size() - 1).to
+        ));
         currentPage = newPage;
     }
 }

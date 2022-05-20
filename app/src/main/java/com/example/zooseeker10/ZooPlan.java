@@ -70,4 +70,7 @@ public class ZooPlan implements Serializable {
         return items;
     }
 
+    public int size() {
+        return plan.size();
+    }
 }
