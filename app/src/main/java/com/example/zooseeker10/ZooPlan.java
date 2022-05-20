@@ -23,6 +23,10 @@ public class ZooPlan implements Serializable {
         this.plan = plan;
     }
 
+    public Iterator<GraphPath<String, IdentifiedWeightedEdge>> iterator() {
+        return plan.iterator();
+    }
+
     public List<DirectionsItem> explainPath(Context context, int idx) {
         Map<String, ZooData.VertexInfo> vertexInfo = ZooData.getVertexInfo(context);
         Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.getEdgeInfo(context);
