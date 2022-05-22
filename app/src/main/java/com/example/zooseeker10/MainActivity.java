@@ -1,10 +1,20 @@
 package com.example.zooseeker10;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,7 +22,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,10 +42,51 @@ public class MainActivity extends AppCompatActivity {
     private TextView exhibitsCountView;
     private SelectedExhibitsAdapter adapter;
 
+    private final ActivityResultLauncher<String[]> requestPermissionLauncher=
+            registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), perms ->{
+                perms.forEach((perm, isGranted) -> {
+                    Log.i("MainActivity", String.format("Permission %s granted: %s", perm, isGranted));
+                });
+            });
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* Permissions Setup */
+        {
+            var requiredPermissions = new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+            };
+
+            var hasNoLocationPerms = Arrays.stream(requiredPermissions)
+                    .map(perm -> ContextCompat.checkSelfPermission(this, perm))
+                    .allMatch(status -> status == PackageManager.PERMISSION_DENIED);
+
+            if(hasNoLocationPerms){
+                requestPermissionLauncher.launch(requiredPermissions);
+                return;
+            }
+        }
+
+        /* Listen for Location Updates */
+        {
+            var provider = LocationManager.GPS_PROVIDER;
+            var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            var locationListener = new LocationListener(){
+                @Override
+                public void onLocationChanged(@NonNull Location location){
+                    Log.d("Main Activity", String.format("Location changed: %s", location));
+
+                    var currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                }
+            };
+
+            locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
+        }
 
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
