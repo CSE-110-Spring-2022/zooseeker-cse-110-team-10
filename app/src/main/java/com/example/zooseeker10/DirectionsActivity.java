@@ -20,9 +20,14 @@ public class DirectionsActivity extends AppCompatActivity {
     TextView directionsTitle;
 
     ZooPlan plan;
+    ZooPlan.ZooWalker walker;
     DirectionsListAdapter dLAdapter;
     Map<String, ZooData.VertexInfo> vertexInfo;
-    int currentPage;
+
+    enum Directions {
+        FORWARD,
+        BACKWARD
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +36,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         plan = (ZooPlan)intent.getSerializableExtra("paths");
+        walker = plan.new ZooWalker(0);
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
@@ -44,36 +50,42 @@ public class DirectionsActivity extends AppCompatActivity {
         recyclerView.setAdapter(dLAdapter);
 
         // Loads up initial page
-        setDirectionsPage(0);
+        setDirectionsPage(Directions.BACKWARD);
 
         previousButton.setOnClickListener(
-                view -> { setDirectionsPage(currentPage - 1); }
+                view -> { setDirectionsPage(Directions.BACKWARD); }
         );
 
         nextButton.setOnClickListener(
-                view -> { setDirectionsPage(currentPage + 1); }
+                view -> { setDirectionsPage(Directions.FORWARD); }
         );
 
     }
 
-    public void setDirectionsPage(int newPage) {
+    public void setDirectionsPage(Directions d) {
+        if (d == Directions.FORWARD){
+            walker.traverseForward();
+        }
+        else {
+            walker.traverseBackward();
+        }
 
-        if (newPage == 0) {
+        if (!walker.hasPrevious()) {
             previousButton.setVisibility(View.INVISIBLE);
         } else {
             previousButton.setVisibility(View.VISIBLE);
         }
-        if (newPage == plan.size() - 1) {
+        if (!walker.hasNext()) {
             nextButton.setVisibility(View.INVISIBLE);
         } else {
             nextButton.setVisibility(View.VISIBLE);
         }
-        List<DirectionsItem> displayedDirections = plan.explainPath(this, newPage);
+
+        List<DirectionsItem> displayedDirections = walker.explainPath(this);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
                 displayedDirections.get(0).from,
                 displayedDirections.get(displayedDirections.size() - 1).to
         ));
-        currentPage = newPage;
     }
 }
