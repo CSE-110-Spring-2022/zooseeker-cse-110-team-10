@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    public final SelectedExhibits selectedExhibits = new SelectedExhibits(this);
 
-    public ArrayList<String> selectedExhibitIds = new ArrayList<>();
     private RecyclerView recyclerView;
     private Button planButton;
     private EditText searchBarView;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPlanButtonClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
-        intent.putStringArrayListExtra("exhibits", selectedExhibitIds);
+        intent.putStringArrayListExtra("exhibits", selectedExhibits.selectedExhibitIds);
         startActivity(intent);
     }
 
@@ -92,25 +92,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectExhibit(String exhibitId) {
-        if (selectedExhibitIds.isEmpty()) {
+        selectedExhibits.selectExhibit(exhibitId);
+        if (!selectedExhibits.selectedExhibitIds.isEmpty()) {
             planButton.setVisibility(View.VISIBLE);
-        }
-        if (!selectedExhibitIds.contains(exhibitId)) {
-            selectedExhibitIds.add(0, exhibitId);
-            Log.d("MainActivity", exhibitId);
         }
     }
 
     public void updateAdapter() {
+            //List<ZooData.VertexInfo> selectedExhibits=SelectedExhibits.getExhibits();
             Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(this);
-            List<ZooData.VertexInfo> selectedExhibits = selectedExhibitIds.stream()
+            List<ZooData.VertexInfo> selectedExhibits = this.selectedExhibits.selectedExhibitIds.stream()
                     .map(exhibits::get)
                     .collect(Collectors.toList());
 
-
             adapter.setSelectedExhibits(selectedExhibits);
 
-            exhibitsCountView.setText("(" + selectedExhibitIds.size() + ")");
-            Log.d("SelectedExhibitIds", selectedExhibitIds.toString());
+            exhibitsCountView.setText("(" + this.selectedExhibits.selectedExhibitIds.size() + ")");
+            Log.d("SelectedExhibitIds", this.selectedExhibits.selectedExhibitIds.toString());
     }
 }

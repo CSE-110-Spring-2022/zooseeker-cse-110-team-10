@@ -28,13 +28,13 @@ public class SelectExhibitTest {
             assertEquals(View.INVISIBLE, planButton.getVisibility());
 
             activity.selectExhibit("gorillas");
-            assertEquals(false, activity.selectedExhibitIds.isEmpty());
-            assertEquals(1, activity.selectedExhibitIds.size());
-            assertEquals(true, activity.selectedExhibitIds.contains("gorillas"));
+            assertEquals(false, activity.selectedExhibits.selectedExhibitIds.isEmpty());
+            assertEquals(1, activity.selectedExhibits.selectedExhibitIds.size());
+            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("gorillas"));
             assertEquals(View.VISIBLE, planButton.getVisibility());
 
-            activity.selectExhibit("gorillas");
-            assertEquals(1, activity.selectedExhibitIds.size());
+            activity.selectedExhibits.selectExhibit("gorillas");
+            assertEquals(1, activity.selectedExhibits.selectedExhibitIds.size());
         });
     }
 
@@ -53,11 +53,11 @@ public class SelectExhibitTest {
             activity.selectExhibit("gorillas");
             activity.selectExhibit("lions");
             activity.selectExhibit("elephants");
-            assertEquals(false, activity.selectedExhibitIds.isEmpty());
-            assertEquals(3, activity.selectedExhibitIds.size());
-            assertEquals(true, activity.selectedExhibitIds.contains("gorillas"));
-            assertEquals(true, activity.selectedExhibitIds.contains("lions"));
-            assertEquals(true, activity.selectedExhibitIds.contains("elephants"));
+            assertEquals(false, activity.selectedExhibits.selectedExhibitIds.isEmpty());
+            assertEquals(3, activity.selectedExhibits.selectedExhibitIds.size());
+            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("gorillas"));
+            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("lions"));
+            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("elephants"));
 
             assertEquals(View.VISIBLE, planButton.getVisibility());
         });
