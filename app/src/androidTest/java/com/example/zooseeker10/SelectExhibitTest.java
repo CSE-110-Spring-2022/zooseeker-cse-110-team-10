@@ -27,14 +27,13 @@ public class SelectExhibitTest {
             Button planButton = activity.findViewById(R.id.plan_btn);
             assertEquals(View.INVISIBLE, planButton.getVisibility());
 
-            activity.selectExhibit("gorillas");
-            assertEquals(false, activity.selectedExhibits.selectedExhibitIds.isEmpty());
-            assertEquals(1, activity.selectedExhibits.selectedExhibitIds.size());
-            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("gorillas"));
+            activity.selectedExhibits.addExhibit("gorillas");
+            assertEquals(1, activity.selectedExhibits.getCount());
+            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("gorillas"));
             assertEquals(View.VISIBLE, planButton.getVisibility());
 
-            activity.selectExhibit("gorillas");
-            assertEquals(1, activity.selectedExhibits.selectedExhibitIds.size());
+            activity.selectedExhibits.addExhibit("gorillas");
+            assertEquals(1, activity.selectedExhibits.getCount());
         });
     }
 
@@ -50,14 +49,13 @@ public class SelectExhibitTest {
             Button planButton = activity.findViewById(R.id.plan_btn);
             assertEquals(View.INVISIBLE, planButton.getVisibility());
 
-            activity.selectExhibit("gorillas");
-            activity.selectExhibit("lions");
-            activity.selectExhibit("elephants");
-            assertEquals(false, activity.selectedExhibits.selectedExhibitIds.isEmpty());
-            assertEquals(3, activity.selectedExhibits.selectedExhibitIds.size());
-            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("gorillas"));
-            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("lions"));
-            assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("elephants"));
+            activity.selectedExhibits.addExhibit("gorillas");
+            activity.selectedExhibits.addExhibit("lions");
+            activity.selectedExhibits.addExhibit("elephants");
+            assertEquals(3, activity.selectedExhibits.getCount());
+            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("gorillas"));
+            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("lions"));
+            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("elephants"));
 
             assertEquals(View.VISIBLE, planButton.getVisibility());
         });
