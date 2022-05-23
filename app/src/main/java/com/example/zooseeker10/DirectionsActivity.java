@@ -15,6 +15,7 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
+    public static boolean callReplan;
     Button previousButton;
     Button nextButton;
     TextView directionsTitle;
