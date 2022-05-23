@@ -25,6 +25,23 @@
         android:text="Directions"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/plan_dist_list" />
+        app:layout_constraintTop_toBottomOf="@+id/plan_dist_list"
+        app:layout_constraintVertical_bias="0.625" />
+
+    <Button
+        android:id="@+id/restartPlanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Restart Plan"
+        android:onClick="onRestartPlanButtonClicked"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/plan_dist_list"
+        app:layout_constraintVertical_bias="0.625" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

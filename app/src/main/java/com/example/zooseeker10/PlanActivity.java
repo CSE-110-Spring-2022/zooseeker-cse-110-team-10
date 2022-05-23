@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 
 public class PlanActivity extends AppCompatActivity {
-
     List<GraphPath<String, IdentifiedWeightedEdge>> paths;
+    private PlanDistListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
 
-        PlanDistListAdapter adapter = new PlanDistListAdapter();
+        adapter = new PlanDistListAdapter();
         RecyclerView recyclerView = findViewById(R.id.plan_dist_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -100,6 +100,12 @@ public class PlanActivity extends AppCompatActivity {
         String pathsSerialized = gson.toJson(pathIDs, pathIDsType);
         Log.d("PlanActivity", pathsSerialized);
         intent.putExtra("paths", pathsSerialized);
+        startActivity(intent);
+    }
+
+    public void onRestartPlanButtonClicked(View view) {
+        adapter.clear();
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 }
