@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateAdapter() {
-            //List<ZooData.VertexInfo> selectedExhibits=SelectedExhibits.getExhibits();
+            //List<ZooData.VertexInfo> selectedExhibits = SelectedExhibits.getExhibits();
             Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(this);
             List<ZooData.VertexInfo> selectedExhibits = this.selectedExhibits.selectedExhibitIds.stream()
                     .map(exhibits::get)

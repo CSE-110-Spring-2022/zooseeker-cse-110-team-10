@@ -13,7 +13,7 @@ public class SelectedExhibits {
     public ArrayList<String> selectedExhibitIds = new ArrayList<String>();
 
     public SelectedExhibits(MainActivity mainActivity) {
-        this.mainActivity=mainActivity;
+        this.mainActivity = mainActivity;
     }
 
     public void addExhibit(String exhibitId) {
