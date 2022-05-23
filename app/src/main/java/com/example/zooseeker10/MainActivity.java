@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /* Permissions Setup */
-        if (permissionChecker.ensurePermissions()) return;
+        permissionChecker.ensurePermissions();
 
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
@@ -59,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /*
     private boolean ensurePermissions() {
         return permissionChecker.ensurePermissions();
     }
+    */
 
     public void onSearchButtonClicked(View view) {
         String searchQuery = searchBarView.getText().toString();
