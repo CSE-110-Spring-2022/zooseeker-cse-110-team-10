@@ -77,5 +77,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/list_title_view" />
 
+    <ImageView
+        android:id="@+id/deleteButton"
+        android:layout_width="39dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="onDeleteButtonClicked"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search_btn"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

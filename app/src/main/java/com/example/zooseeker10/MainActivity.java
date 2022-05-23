@@ -113,4 +113,11 @@ public class MainActivity extends AppCompatActivity {
             exhibitsCountView.setText("(" + selectedExhibitIds.size() + ")");
             Log.d("SelectedExhibitIds", selectedExhibitIds.toString());
     }
+
+    public void onDeleteButtonClicked(View view) {
+        selectedExhibitIds.clear();
+        exhibitsCountView.setText("(" + selectedExhibitIds.size() + ")");
+        adapter.clear();
+        planButton.setVisibility(View.INVISIBLE);
+    }
 }

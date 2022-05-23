@@ -1,5 +1,6 @@
 package com.example.zooseeker10;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,11 @@ public class SelectedExhibitsAdapter extends RecyclerView.Adapter<SelectedExhibi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.setSelectedExhibit(this.selectedExhibits.get(position));
+    }
+
+    public void clear() {
+        selectedExhibits.clear();
+        notifyDataSetChanged();
     }
 
     @Override
