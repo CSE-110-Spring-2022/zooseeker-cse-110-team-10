@@ -33,7 +33,7 @@ public class SelectExhibitTest {
             assertEquals(true, activity.selectedExhibits.selectedExhibitIds.contains("gorillas"));
             assertEquals(View.VISIBLE, planButton.getVisibility());
 
-            activity.selectedExhibits.selectExhibit("gorillas");
+            activity.selectExhibit("gorillas");
             assertEquals(1, activity.selectedExhibits.selectedExhibitIds.size());
         });
     }
