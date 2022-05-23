@@ -1,15 +1,23 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,10 +35,28 @@ public class DirectionsActivity extends AppCompatActivity {
     Map<String, ZooData.VertexInfo> vertexInfo;
     int currentPage;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
+
+        /*Listen for Location Updates*/
+        {
+            var provider = LocationManager.GPS_PROVIDER;
+            var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            var locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull Location location) {
+                    Log.d("Main Activity", String.format("Location changed: %s", location));
+
+                    var currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+                }
+            };
+            locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
+        }
+
         Intent intent = getIntent();
         Gson gson = new Gson();
         Type pathIDsType = new TypeToken<List<List<String>>>() {}.getType();
