@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
+    public static boolean callReplan;
     List<List<String>> paths;
     Button previousButton;
     Button nextButton;
