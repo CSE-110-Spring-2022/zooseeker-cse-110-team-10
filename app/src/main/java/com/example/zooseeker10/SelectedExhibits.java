@@ -16,10 +16,13 @@ public class SelectedExhibits {
         this.mainActivity=mainActivity;
     }
 
-    public void selectExhibit(String exhibitId) {
+    public void addExhibit(String exhibitId) {
         if (!selectedExhibitIds.contains(exhibitId)) {
             selectedExhibitIds.add(0, exhibitId);
             Log.d("MainActivity", exhibitId);
+        }
+        if (!selectedExhibitIds.isEmpty()) {
+            mainActivity.planButton.setVisibility(View.VISIBLE);
         }
     }
 

@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     public final SelectedExhibits selectedExhibits = new SelectedExhibits(this);
 
     private RecyclerView recyclerView;
-    private Button planButton;
+    public Button planButton;
     private EditText searchBarView;
     private TextView exhibitsCountView;
     private SelectedExhibitsAdapter adapter;
@@ -85,16 +85,9 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String exhibitId = data.getStringExtra("exhibitId");
-                selectExhibit(exhibitId);
+                selectedExhibits.addExhibit(exhibitId);
                 updateAdapter();
             }
-        }
-    }
-
-    public void selectExhibit(String exhibitId) {
-        selectedExhibits.selectExhibit(exhibitId);
-        if (!selectedExhibits.selectedExhibitIds.isEmpty()) {
-            planButton.setVisibility(View.VISIBLE);
         }
     }
 
