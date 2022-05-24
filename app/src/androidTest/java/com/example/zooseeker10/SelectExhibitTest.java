@@ -51,11 +51,11 @@ public class SelectExhibitTest {
 
             activity.selectedExhibits.addExhibit("gorillas");
             activity.selectedExhibits.addExhibit("lions");
-            activity.selectedExhibits.addExhibit("elephants");
+            activity.selectedExhibits.addExhibit("elephant_odyssey");
             assertEquals(3, activity.selectedExhibits.getCount());
             assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("gorillas"));
             assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("lions"));
-            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("elephants"));
+            assertEquals(true, activity.selectedExhibits.getExhibitIds().contains("elephant_odyssey"));
 
             assertEquals(View.VISIBLE, planButton.getVisibility());
         });
