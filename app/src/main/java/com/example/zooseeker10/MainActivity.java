@@ -13,9 +13,9 @@ import android.widget.EditText;
 
 import android.widget.TextView;
 
-
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
     public SelectedExhibits selectedExhibits;
     private RecyclerView recyclerView;
@@ -30,6 +30,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         selectedExhibits = new SelectedExhibits(this);
+
+        /* Permissions Setup */
+        permissionChecker.ensurePermissions();
+
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
         searchBarView = findViewById(R.id.search_bar_view);
@@ -43,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("dummy", true);
         startActivity(intent);
     }
+
+    /*
+    private boolean ensurePermissions() {
+        return permissionChecker.ensurePermissions();
+    }
+    */
 
     public void onSearchButtonClicked(View view) {
         String searchQuery = searchBarView.getText().toString();
@@ -88,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update() {
-            adapter.setSelectedExhibits(this.selectedExhibits.getExhibits());
+            adapter.setSelectedExhibits(this.selectedExhibits.getExhibitIDs());
             if (this.selectedExhibits.getCount() > 0) {
                 planButton.setVisibility(View.VISIBLE);
             }

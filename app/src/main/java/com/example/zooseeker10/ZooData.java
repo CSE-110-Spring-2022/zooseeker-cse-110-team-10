@@ -3,6 +3,8 @@ package com.example.zooseeker10;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -14,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
@@ -25,9 +28,9 @@ import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.nio.json.JSONImporter;
 
 public class ZooData {
-    public static final String ZOO_GRAPH_PATH = "sample_zoo_graph.json";
-    public static final String NODE_INFO_PATH = "sample_node_info.json";
-    public static final String EDGE_INFO_PATH = "sample_edge_info.json";
+    public static final String ZOO_GRAPH_PATH = "zoo_graph.json";
+    public static final String NODE_INFO_PATH = "exhibit_info.json";
+    public static final String EDGE_INFO_PATH = "trail_info.json";
     public static final String ENTRANCE_GATE_ID = "entrance_exit_gate";
     public static final String EXIT_GATE_ID = "entrance_exit_gate";
 
@@ -42,28 +45,86 @@ public class ZooData {
             // from the strings in our JSON to this Enum.
             @SerializedName("gate") GATE,
             @SerializedName("exhibit") EXHIBIT,
-            @SerializedName("intersection") INTERSECTION
+            @SerializedName("intersection") INTERSECTION,
+            @SerializedName("exhibit_group") EXHIBIT_GROUP;
+
+            public static final Set<Kind> NAVIGABLE_KINDS = Set.of(
+                GATE, EXHIBIT, INTERSECTION
+            );
         }
 
         @PrimaryKey
+        @ColumnInfo(name = "id")
+        @SerializedName("id")
         @NonNull
-        public String id;
+        public final String id;
 
+        @ColumnInfo(name = "group_id")
+        @SerializedName("group_id")
+        @Nullable
+        public final String groupId;
+
+        @ColumnInfo(name = "kind")
+        @SerializedName("kind")
         @NonNull
-        public Kind kind;
+        public final Kind kind;
 
+        @ColumnInfo(name = "name")
+        @SerializedName("name")
         @NonNull
-        public String name;
+        public final String name;
 
+        @ColumnInfo(name = "tags")
+        @SerializedName("tags")
         @NonNull
-        public List<String> tags;
+        public final List<String> tags;
 
-        public VertexInfo(@NonNull String id, @NonNull Kind kind,
-                          @NonNull String name, @NonNull List<String> tags) {
+        @ColumnInfo(name = "lat")
+        @SerializedName("lat")
+        public final Double lat;
+
+        @ColumnInfo(name = "lng")
+        @SerializedName("lng")
+        public final Double lng;
+
+        public boolean isExhibit() {
+            return kind.equals(Kind.EXHIBIT);
+        }
+
+        public boolean isIntersection() {
+            return kind.equals(Kind.INTERSECTION);
+        }
+
+        public boolean isGroup() {
+            return kind.equals(Kind.EXHIBIT_GROUP);
+        }
+
+        public boolean hasGroup() {
+            return groupId != null;
+        }
+
+        public boolean isNavigable() {
+            return Kind.NAVIGABLE_KINDS.contains(kind);
+        }
+
+        public VertexInfo(@NonNull String id,
+                       @Nullable String groupId,
+                       @NonNull Kind kind,
+                       @NonNull String name,
+                       @NonNull List<String> tags,
+                       @Nullable Double lat,
+                       @Nullable Double lng) {
             this.id = id;
+            this.groupId = groupId;
             this.kind = kind;
             this.name = name;
             this.tags = tags;
+            this.lat = lat;
+            this.lng = lng;
+
+            if (!this.hasGroup() && (lat == null || lng == null)) {
+                throw new RuntimeException("Nodes must have a lat/long unless they are grouped.");
+            }
         }
 
         @Override
