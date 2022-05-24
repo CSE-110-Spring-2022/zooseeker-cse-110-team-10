@@ -98,8 +98,22 @@ public class ZooPlan implements Serializable {
          *
          * @return current index of user in the path
          */
-        public int getCurrentPathIndex() {
+        public int getCurrentExhibitIndex() {
             return currentIndex;
+        }
+
+        public String getCurrentExhibitID() {
+            return plan.get(currentIndex).getStartVertex();
+        }
+
+        public List<String> getUnvisitedExhibits() {
+            List<String> unvisited = new ArrayList<>();
+
+            for (int i = currentIndex; i < plan.size(); i++) {
+                unvisited.add(plan.get(i).getEndVertex());
+            }
+
+            return unvisited;
         }
 
         /**
