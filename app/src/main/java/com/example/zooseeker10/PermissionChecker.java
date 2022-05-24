@@ -16,7 +16,7 @@ public class PermissionChecker {
     final ActivityResultLauncher<String[]> requestPermissionLauncher;
 
     public PermissionChecker(ComponentActivity activity) {
-        this.activity=activity;
+        this.activity = activity;
         requestPermissionLauncher = activity.registerForActivityResult(new ActivityResultContracts.RequestMultiplePermissions(), perms -> {
             perms.forEach((perm, isGranted) -> {
                 Log.i("MainActivity", String.format("Permission %s granted: %s", perm, isGranted));

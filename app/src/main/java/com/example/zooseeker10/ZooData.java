@@ -163,6 +163,10 @@ public class ZooData {
         return vertexInfo;
     }
 
+    public static Map<String, ZooData.VertexInfo> getVertexInfo() {
+        return vertexInfo;
+    }
+
     public static Map<String, ZooData.VertexInfo> loadVertexInfoJSON(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open(path);

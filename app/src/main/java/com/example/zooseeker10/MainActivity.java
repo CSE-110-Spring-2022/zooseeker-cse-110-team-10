@@ -1,24 +1,16 @@
 package com.example.zooseeker10;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,16 +46,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        setUpData();
+    }
+
+    private void setUpData() {
+        ZooData.getVertexInfo(this);
         Intent intent = new Intent(this, SearchResultsActivity.class);
         intent.putExtra("dummy", true);
         startActivity(intent);
     }
-
-    /*
-    private boolean ensurePermissions() {
-        return permissionChecker.ensurePermissions();
-    }
-    */
 
     public void onSearchButtonClicked(View view) {
         String searchQuery = searchBarView.getText().toString();
