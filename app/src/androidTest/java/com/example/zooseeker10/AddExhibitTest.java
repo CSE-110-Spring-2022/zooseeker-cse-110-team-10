@@ -13,6 +13,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,6 +22,11 @@ public class AddExhibitTest {
     @Test
     public void addExhibitTest() {
         String searchQuery = "gorillas";
+        Intent dummyIntent
+                = new Intent(ApplicationProvider.getApplicationContext(), SearchResultsActivity.class);
+        dummyIntent.putExtra("dummy", true);
+        ActivityScenario<SearchResultsActivity> dummyScenario = ActivityScenario.launch(dummyIntent);
+
         Intent intent
                 = new Intent(ApplicationProvider.getApplicationContext(), SearchResultsActivity.class);
         intent.putExtra("search_query", searchQuery);

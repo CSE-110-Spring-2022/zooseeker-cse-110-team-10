@@ -12,17 +12,34 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import org.jgrapht.Graph;
+import org.jgrapht.graph.GraphWalk;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.Arrays;
 
 @RunWith(AndroidJUnit4.class)
 public class DirectionsTest {
 
+    private static Graph<String, IdentifiedWeightedEdge> graph;
+
+    /**
+     * Imports the graph topology from the example file
+     */
+    @Before
+    public void setup() {
+        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+    }
+
     @Test
     public void testDirections() {
-        String paths = "[[\"entrance_exit_gate\", \"edge-0\", \"entrance_plaza\", \"edge-4\", \"arctic_foxes\"]]";
+        ZooPlan plan = new ZooPlan(Arrays.asList(
+                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "arctic_foxes"), 310.0)
+        ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", paths);
+        intent.putExtra("paths", plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);
