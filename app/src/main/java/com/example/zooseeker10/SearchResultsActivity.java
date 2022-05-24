@@ -13,6 +13,7 @@ import java.util.List;
 
 public class SearchResultsActivity extends AppCompatActivity {
     private final String RESULT_TITLE_FORMAT = "Results with \"%s\".";
+    private  SearchResults searchResults;
     public RecyclerView recyclerView;
 
     @Override
@@ -30,11 +31,10 @@ public class SearchResultsActivity extends AppCompatActivity {
         TextView searchQueryView = findViewById(R.id.search_query_view);
         searchQueryView.setText(String.format(RESULT_TITLE_FORMAT, searchQuery));
 
-        ZooDataDao zooDataDao = ZooDatabase.getSingleton(this).zooDataDao();
-        List<ZooData.VertexInfo> searchResults = zooDataDao
-                .getQuerySearch(ZooData.VertexInfo.Kind.EXHIBIT, '%' + searchQuery + '%');
+        this.searchResults = new SearchResults(this, searchQuery);
+
         SearchResultsAdapter adapter = new SearchResultsAdapter();
-        adapter.setSearchResults(searchResults);
+        adapter.setSearchResults(this.searchResults.getSearchResults());
         adapter.setOnAddBtnClickedHandler(this::onAddExhibitClicked);
 
         recyclerView = findViewById(R.id.search_results);

@@ -53,7 +53,9 @@ public class OffTrackDetector {
         ZooData.VertexInfo exhibitInfo = vertexInfoMap.get(exhibitID);
         LatLng exhibitCoord = new LatLng(exhibitInfo.lat, exhibitInfo.lng);
 
-        return Math.pow(currentLocation.latitude - exhibitCoord.latitude, 2) +
-               Math.pow(currentLocation.longitude - exhibitCoord.longitude, 2);
+        return Math.sqrt(
+                Math.pow(currentLocation.latitude - exhibitCoord.latitude, 2) +
+                Math.pow(currentLocation.longitude - exhibitCoord.longitude, 2)
+        );
     }
 }
