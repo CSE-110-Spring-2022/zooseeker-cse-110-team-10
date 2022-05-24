@@ -72,12 +72,12 @@ public class DirectionsActivity extends AppCompatActivity {
             var locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
-                    Log.d("Main Activity", String.format("Location changed: %s", location));
+                    Log.d("DirectionsActivity", String.format("Location changed: %s", location));
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
                     if (locationDetector.isOffTrack(currentLocation)) {
-
+                        Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
                     }
                 }
             };

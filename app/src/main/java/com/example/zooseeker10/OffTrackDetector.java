@@ -50,9 +50,10 @@ public class OffTrackDetector {
      * @return distance to the given exhibit
      */
     private double getDistanceFrom(LatLng currentLocation, String exhibitID) {
-        LatLng idCoord = vertexInfoMap.get(ID).coordinates; // TODO: Do vertexinfo properly
+        ZooData.VertexInfo exhibitInfo = vertexInfoMap.get(exhibitID);
+        LatLng exhibitCoord = new LatLng(exhibitInfo.lat, exhibitInfo.lng);
 
-        return Math.pow(currentLocation.latitude - idCoord.latitude, 2) +
-               Math.pow(currentLocation.longitude - idCoord.longitude, 2);
+        return Math.pow(currentLocation.latitude - exhibitCoord.latitude, 2) +
+               Math.pow(currentLocation.longitude - exhibitCoord.longitude, 2);
     }
 }
