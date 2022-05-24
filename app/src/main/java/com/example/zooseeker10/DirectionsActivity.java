@@ -37,7 +37,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         plan = (ZooPlan)intent.getSerializableExtra("paths");
-        walker = plan.new ZooWalker(0);
+        walker = plan.startWalker();
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);

@@ -16,12 +16,7 @@ import java.util.Map;
  * ZooPlan is used to easily manage and manipulate a plan
  */
 public class ZooPlan implements Serializable {
-    /*
-    String entranceID;
-    String exitID;
-    Set<String> unvisited; // replanable exhibits
-    */
-    List<GraphPath<String, IdentifiedWeightedEdge>> plan;
+    ArrayList<GraphPath<String, IdentifiedWeightedEdge>> plan;
 
     /**
      * ZooWalker is used to keep track of the current position of the user
@@ -139,7 +134,7 @@ public class ZooPlan implements Serializable {
      * @param plan plan to be managed
      */
     public ZooPlan(List<GraphPath<String, IdentifiedWeightedEdge>> plan) {
-        this.plan = plan;
+        this.plan = new ArrayList<>(plan);
     }
 
     /**
@@ -149,6 +144,15 @@ public class ZooPlan implements Serializable {
      */
     public Iterator<GraphPath<String, IdentifiedWeightedEdge>> iterator() {
         return plan.iterator();
+    }
+
+    /**
+     * Creates a new ZooWalker viewing the start of the path
+     *
+     * @return new ZooWalker viewing the start of the path
+     */
+    public ZooWalker startWalker() {
+        return new ZooWalker(0);
     }
 
     /**
@@ -178,5 +182,31 @@ public class ZooPlan implements Serializable {
      */
     public int size() {
         return plan.size();
+    }
+
+    /**
+     * Gets the exhibits that can be re-planned, i.e. the destination exhibit for the subpath
+     * represented by the iterator and all subsequent exhibits
+     */
+    public List<String> getReplannable(ZooWalker walker) {
+        List<String> replannableExhibits = new ArrayList<>();
+        for (int i = walker.currentIndex; i < this.plan.size() - 1; i++) {
+            replannableExhibits.add(this.plan.get(i).getEndVertex());
+        }
+        return replannableExhibits;
+    }
+
+    /**
+     * Overwrites part of this plan with a new plan. The subpath represented by the iterator and
+     * all subsequent subpaths are overwritten.
+     *
+     * @param walker iterator for the first subpath to be overwritten by the new plan
+     * @param newPlan the new plan to be written over this plan
+     */
+    public void replan(ZooWalker walker, ZooPlan newPlan) {
+        int i = walker.currentIndex;
+        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, this.plan.size());
+        replanSegment.clear();
+        replanSegment.addAll(newPlan.plan);
     }
 }

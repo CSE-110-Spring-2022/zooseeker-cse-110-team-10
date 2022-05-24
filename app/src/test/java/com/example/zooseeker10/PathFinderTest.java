@@ -114,4 +114,23 @@ public class PathFinderTest {
         assertEquals(310.0, planPart.getWeight(), DOUBLE_EPSILON);
         assertFalse(planIterator.hasNext());
     }
+
+    @Test
+    public void findPathFrom() {
+        ZooPlan plan = pathfinder.findPath(Arrays.asList("gorillas", "lions"), "elephant_odyssey");
+        Iterator<GraphPath<String, IdentifiedWeightedEdge>> planIterator = plan.iterator();
+        GraphPath<String, IdentifiedWeightedEdge> planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-3"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("elephant_odyssey", "lions"), planPart.getVertexList());
+        assertEquals(200.0, planPart.getWeight(), DOUBLE_EPSILON);
+        planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-2"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("lions", "gorillas"), planPart.getVertexList());
+        assertEquals(200.0, planPart.getWeight(), DOUBLE_EPSILON);
+        planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-1", "edge-0"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("gorillas", "entrance_plaza", "entrance_exit_gate"), planPart.getVertexList());
+        assertEquals(210.0, planPart.getWeight(), DOUBLE_EPSILON);
+        assertFalse(planIterator.hasNext());
+    }
 }
