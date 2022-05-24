@@ -1,10 +1,15 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +28,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
     public ArrayList<String> selectedExhibitIds = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -32,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /* Permissions Setup */
+        permissionChecker.ensurePermissions();
 
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
@@ -46,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("dummy", true);
         startActivity(intent);
     }
+
+    /*
+    private boolean ensurePermissions() {
+        return permissionChecker.ensurePermissions();
+    }
+    */
 
     public void onSearchButtonClicked(View view) {
         String searchQuery = searchBarView.getText().toString();
