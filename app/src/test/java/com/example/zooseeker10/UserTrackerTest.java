@@ -26,8 +26,8 @@ public class UserTrackerTest {
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
-        Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(context);
-        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.getVertexInfo(context);
+        Graph<String, IdentifiedWeightedEdge> graph = ZooData.loadZooGraphJSON(context, Globals.ZooData.ZOO_GRAPH_PATH); // ???
+        ZooData.loadVertexInfoJSON(context, Globals.ZooData.NODE_INFO_PATH);
 
         List<String> exhibits = Arrays.asList("siamang", "orangutan", "hippo");
 
