@@ -2,16 +2,21 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.*;
 
+import android.content.Context;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.graph.GraphWalk;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 @RunWith(AndroidJUnit4.class)
@@ -24,7 +29,18 @@ public class ZooPlanTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
+        graph = ZooData.getZooGraph(context);
+    }
+
+    private static List<String> getIDs(List<IdentifiedWeightedEdge> edgeList) {
+        List<String> ids = new ArrayList<>();
+        for (IdentifiedWeightedEdge e : edgeList) {
+            ids.add(e.getId());
+        }
+        return ids;
     }
 
     @Test
@@ -78,7 +94,7 @@ public class ZooPlanTest {
                 new GraphWalk<>(graph, Arrays.asList("gorillas", "entrance_plaza"), 200.0),
                 new GraphWalk<>(graph, Arrays.asList("entrance_plaza", "arctic_foxes"), 300.0)
         ));
-        ZooPlan.ZooWalker zw = plan.new ZooWalker(0);
+        ZooPlan.ZooWalker zw = plan.startWalker();
         List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
         assertEquals(1, explain.size());
         assertEquals("Gorillas", explain.get(0).from);
@@ -99,7 +115,7 @@ public class ZooPlanTest {
         ZooPlan plan = new ZooPlan(Arrays.asList(
                 new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "gators", "lions"), 310.0)
         ));
-        ZooPlan.ZooWalker zw = plan.new ZooWalker(0);
+        ZooPlan.ZooWalker zw = plan.startWalker();
         List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
         assertEquals(3, explain.size());
         assertEquals("Entrance and Exit Gate", explain.get(0).from);
@@ -115,4 +131,56 @@ public class ZooPlanTest {
         assertEquals("Sharp Teeth Shortcut", explain.get(2).street);
         assertEquals(200.0, explain.get(2).dist, DOUBLE_EPSILON);
     }
+
+    @Test
+    public void replannable_manyExhibits() {
+        ZooPlan plan = new ZooPlan(Arrays.asList(
+                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "gorillas"), 210.0),
+                new GraphWalk<>(graph, Arrays.asList("gorillas", "lions"), 200.0),
+                new GraphWalk<>(graph, Arrays.asList("lions", "gators"), 200.0),
+                new GraphWalk<>(graph, Arrays.asList("gators", "entrance_plaza", "entrance_exit_gate"), 110.0)
+        ));
+        ZooPlan.ZooWalker walker = plan.startWalker();
+        assertEquals(Arrays.asList("gorillas", "lions", "gators"), plan.getReplannable(walker));
+        walker.traverseForward();
+        assertEquals(Arrays.asList("lions", "gators"), plan.getReplannable(walker));
+        walker.traverseForward();
+        assertEquals(Arrays.asList("gators"), plan.getReplannable(walker));
+        walker.traverseForward();
+        assertEquals(Arrays.asList(), plan.getReplannable(walker));
+        assertFalse(walker.hasNext());
+    }
+
+    @Test
+    public void replan_oneExhibit() {
+        ZooPlan plan = new ZooPlan(Arrays.asList(
+                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "gators", "lions"), 310.0),
+                new GraphWalk<>(graph, Arrays.asList("lions", "elephant_odyssey"), 200.0),
+                new GraphWalk<>(graph, Arrays.asList("elephant_odyssey", "lions", "gators", "entrance_plaza", "entrance_exit_gate"), 510.0)
+        ));
+        ZooPlan.ZooWalker walker = plan.startWalker();
+        walker.traverseForward();
+        ZooPlan replan = new ZooPlan(Arrays.asList(
+                new GraphWalk<>(graph, Arrays.asList("gorillas", "lions", "elephant_odyssey"), 400.0),
+                new GraphWalk<>(graph, Arrays.asList("elephant_odyssey", "lions", "gators", "entrance_plaza", "entrance_exit_gate"), 510.0)
+        ));
+        plan.replan(walker, replan);
+        {
+            Iterator<GraphPath<String, IdentifiedWeightedEdge>> planIterator = plan.iterator();
+            GraphPath<String, IdentifiedWeightedEdge> planPart = planIterator.next();
+            assertEquals(Arrays.asList("edge-0", "edge-5", "edge-6"), getIDs(planPart.getEdgeList()));
+            assertEquals(Arrays.asList("entrance_exit_gate", "entrance_plaza", "gators", "lions"), planPart.getVertexList());
+            assertEquals(310.0, planPart.getWeight(), DOUBLE_EPSILON);
+            planPart = planIterator.next();
+            assertEquals(Arrays.asList("edge-2", "edge-3"), getIDs(planPart.getEdgeList()));
+            assertEquals(Arrays.asList("gorillas", "lions", "elephant_odyssey"), planPart.getVertexList());
+            assertEquals(400.0, planPart.getWeight(), DOUBLE_EPSILON);
+            planPart = planIterator.next();
+            assertEquals(Arrays.asList("edge-3", "edge-6", "edge-5", "edge-0"), getIDs(planPart.getEdgeList()));
+            assertEquals(Arrays.asList("elephant_odyssey", "lions", "gators", "entrance_plaza", "entrance_exit_gate"), planPart.getVertexList());
+            assertEquals(510.0, planPart.getWeight(), DOUBLE_EPSILON);
+            assertFalse(planIterator.hasNext());
+        }
+    }
+
 }

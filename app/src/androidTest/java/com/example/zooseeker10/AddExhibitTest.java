@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.lifecycle.Lifecycle;
@@ -13,7 +12,6 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -21,7 +19,7 @@ import org.junit.runner.RunWith;
 public class AddExhibitTest {
     @Test
     public void addExhibitTest() {
-        String searchQuery = "gorillas";
+        String searchQuery = "gorilla";
         Intent dummyIntent
                 = new Intent(ApplicationProvider.getApplicationContext(), SearchResultsActivity.class);
         dummyIntent.putExtra("dummy", true);
@@ -37,7 +35,7 @@ public class AddExhibitTest {
         scenario.moveToState(Lifecycle.State.RESUMED);
 
         scenario.onActivity(activity -> {
-            String expectedId = "gorillas";
+            String expectedId = "gorilla";
             RecyclerView recyclerView = activity.recyclerView;
             RecyclerView.ViewHolder vh1 = recyclerView.findViewHolderForAdapterPosition(0);
 

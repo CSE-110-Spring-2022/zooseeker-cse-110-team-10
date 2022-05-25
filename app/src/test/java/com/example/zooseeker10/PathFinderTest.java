@@ -3,6 +3,8 @@ package com.example.zooseeker10;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import android.content.Context;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -26,9 +28,12 @@ public class PathFinderTest {
      */
     @Before
     public void setup() {
-        Graph<String, IdentifiedWeightedEdge> graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
 
-        pathfinder = new PathFinder(graph, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
+        Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(context);
+
+        pathfinder = new PathFinder(graph, Globals.ZooDataTest.ENTRANCE_GATE_ID, Globals.ZooDataTest.EXIT_GATE_ID);
     }
 
     private static List<String> getIDs(List<IdentifiedWeightedEdge> edgeList) {
@@ -112,6 +117,25 @@ public class PathFinderTest {
         assertEquals(Arrays.asList("edge-4", "edge-0"), getIDs(planPart.getEdgeList()));
         assertEquals(Arrays.asList("arctic_foxes", "entrance_plaza", "entrance_exit_gate"), planPart.getVertexList());
         assertEquals(310.0, planPart.getWeight(), DOUBLE_EPSILON);
+        assertFalse(planIterator.hasNext());
+    }
+
+    @Test
+    public void findPathFrom() {
+        ZooPlan plan = pathfinder.findPath(Arrays.asList("gorillas", "lions"), "elephant_odyssey");
+        Iterator<GraphPath<String, IdentifiedWeightedEdge>> planIterator = plan.iterator();
+        GraphPath<String, IdentifiedWeightedEdge> planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-3"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("elephant_odyssey", "lions"), planPart.getVertexList());
+        assertEquals(200.0, planPart.getWeight(), DOUBLE_EPSILON);
+        planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-2"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("lions", "gorillas"), planPart.getVertexList());
+        assertEquals(200.0, planPart.getWeight(), DOUBLE_EPSILON);
+        planPart = planIterator.next();
+        assertEquals(Arrays.asList("edge-1", "edge-0"), getIDs(planPart.getEdgeList()));
+        assertEquals(Arrays.asList("gorillas", "entrance_plaza", "entrance_exit_gate"), planPart.getVertexList());
+        assertEquals(210.0, planPart.getWeight(), DOUBLE_EPSILON);
         assertFalse(planIterator.hasNext());
     }
 }

@@ -1,20 +1,30 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
+    public static boolean callReplan;
     Button previousButton;
     Button nextButton;
     TextView directionsTitle;
@@ -29,6 +39,7 @@ public class DirectionsActivity extends AppCompatActivity {
         BACKWARD
     }
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +47,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         plan = (ZooPlan)intent.getSerializableExtra("paths");
-        walker = plan.new ZooWalker(0);
+        walker = plan.startWalker();
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
@@ -51,6 +62,28 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Loads up initial page
         setDirectionsPage(Directions.BACKWARD);
+
+        OffTrackDetector locationDetector = new OffTrackDetector(this, plan, walker);
+
+        /*Listen for Location Updates*/
+        {
+            var provider = LocationManager.GPS_PROVIDER;
+            var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+            var locationListener = new LocationListener() {
+                @Override
+                public void onLocationChanged(@NonNull Location location) {
+                    Log.d("DirectionsActivity", String.format("Location changed: %s", location));
+
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+//                    if (locationDetector.isOffTrack(currentLocation)) {
+//                        Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
+//                    }
+                }
+            };
+            locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
+        }
 
         previousButton.setOnClickListener(
                 view -> { setDirectionsPage(Directions.BACKWARD); }
