@@ -63,9 +63,9 @@ public class DirectionsActivity extends AppCompatActivity {
         // Loads up initial page
         setDirectionsPage(Directions.BACKWARD);
 
-        OffTrackDetector locationDetector = new OffTrackDetector(this, plan, walker);
+        UserTracker userTracker = new UserTracker(plan, walker);
 
-        /*Listen for Location Updates*/
+        /* Listen for Location Updates */
         {
             var provider = LocationManager.GPS_PROVIDER;
             var locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -76,8 +76,9 @@ public class DirectionsActivity extends AppCompatActivity {
                     Log.d("DirectionsActivity", String.format("Location changed: %s", location));
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    userTracker.setUserLocation(currentLocation);
 
-                    if (locationDetector.isOffTrack(currentLocation)) {
+                    if (userTracker.isOffTrack()) {
                         Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
                     }
                 }

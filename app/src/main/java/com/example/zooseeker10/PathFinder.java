@@ -81,7 +81,7 @@ public class PathFinder {
      * @param unvisitedExhibits the available destination vertices
      * @return path from specified start vertex to nearest available destination vertex
      */
-    private GraphPath<String, IdentifiedWeightedEdge> getShortestPathInSet(
+    public GraphPath<String, IdentifiedWeightedEdge> getShortestPathInSet(
             String startVertex,
             Set<String> unvisitedExhibits) {
         ShortestPathAlgorithm.SingleSourcePaths<String, IdentifiedWeightedEdge> shortestPaths = gD.getPaths(startVertex);

@@ -14,6 +14,11 @@ import androidx.core.app.ActivityCompat;
 import com.google.android.gms.maps.model.LatLng;
 
 public class LatLngs {
+    public static final double LAT_TO_FT = 363843.57;
+    public static final double LNG_TO_FT = 307515.50;
+    public static final LatLng DEFAULT_LOCATION =
+        new LatLng(32.73459618734685, -117.14936);
+
     @NonNull
     public static LatLng midpoint(LatLng l1, LatLng l2) {
         return new LatLng(

@@ -111,6 +111,10 @@ public class ZooPlan implements Serializable {
             return unvisited;
         }
 
+        public GraphPath<String, IdentifiedWeightedEdge> getCurrentPath() {
+            return plan.get(currentIndex);
+        }
+
         /**
          * Converts the current subpath to a list of DirectionsItems
          * to be used in DirectionsActivity.
