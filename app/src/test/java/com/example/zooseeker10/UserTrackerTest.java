@@ -27,21 +27,17 @@ public class UserTrackerTest {
 
     private UserTracker tracker;
 
-    private ZooPlan plan;
-    private ZooPlan.ZooWalker walker;
-    private Map<String, ZooData.VertexInfo> vertexInfoMap;
-
     @Before
     public void setup() {
         Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(ApplicationProvider.getApplicationContext());
+        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.getVertexInfo(ApplicationProvider.getApplicationContext());
 
         List<String> exhibits = Arrays.asList("siamang", "orangutan", "hippo");
 
         PathFinder pf = new PathFinder(graph, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
 
-        plan = pf.findPath(exhibits);
-        walker = plan.startWalker();
-        vertexInfoMap = ZooData.getVertexInfo(ApplicationProvider.getApplicationContext());
+        ZooPlan plan = pf.findPath(exhibits);
+        ZooPlan.ZooWalker walker = plan.startWalker();
         tracker = new UserTracker(plan, walker);
     }
 
