@@ -1,6 +1,5 @@
 package com.example.zooseeker10;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
 
 import org.jgrapht.Graph;
@@ -10,9 +9,7 @@ import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class PathFinder {
@@ -41,12 +38,11 @@ public class PathFinder {
      * @param exhibitsToVisit the IDs of exhibits to be visited in the generated path
      * @return a pretty bad shortest path
      */
-    public List<GraphPath<String, IdentifiedWeightedEdge>> findPath(@NonNull List<String> exhibitsToVisit) {
+    public ZooPlan findPath(@NonNull List<String> exhibitsToVisit) {
         List<GraphPath<String, IdentifiedWeightedEdge>> paths = new ArrayList<>();
 
         Set<String> unvisitedExhibits = new HashSet<>(exhibitsToVisit);
         String currVertex = entranceID;
-        double weight = 0;
 
         // Traverse from current node to node in unvisitedExhibits
         while (unvisitedExhibits.size() > 0) {
@@ -59,13 +55,12 @@ public class PathFinder {
             String destVertex = shortestNextPath.getEndVertex();
             unvisitedExhibits.remove(destVertex);
             currVertex = destVertex;
-            weight += shortestNextPath.getWeight();
         }
 
         // Traverse from current node to exit node
         paths.add(gD.getPath(currVertex, exitID));
 
-        return paths;
+        return new ZooPlan(paths);
     }
 
     /**
@@ -91,27 +86,5 @@ public class PathFinder {
         }
 
         return shortestPaths.getPath(shortestPathSinkID);
-    }
-
-    public static List<DirectionsItem> explainPath(Context context, List<String> path) {
-        Map<String, ZooData.VertexInfo> vertexInfo = ZooData.getVertexInfo(context);
-        Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.getEdgeInfo(context);
-        Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(context);
-        List<DirectionsItem> explains = new ArrayList<>();
-        Iterator<String> parts = path.iterator();
-        String lastVertex = parts.next();
-        while (parts.hasNext()) {
-            String nextEdge = parts.next();
-            String nextVertex = parts.next();
-            DirectionsItem explain = new DirectionsItem(
-                    vertexInfo.get(lastVertex).name,
-                    vertexInfo.get(nextVertex).name,
-                    edgeInfo.get(nextEdge).street,
-                    g.getEdgeWeight(g.getEdge(lastVertex, nextVertex))
-            );
-            explains.add(explain);
-            lastVertex = nextVertex;
-        }
-        return explains;
     }
 }

@@ -39,7 +39,7 @@ public class PlanPathTest {
         scenario.moveToState(Lifecycle.State.RESUMED);
 
         scenario.onActivity(activity -> {
-            activity.selectExhibit("lmao animals");
+            activity.selectedExhibits.addExhibit("gators");
             assertEquals(View.VISIBLE, activity.findViewById(R.id.plan_btn).getVisibility());
         });
     }

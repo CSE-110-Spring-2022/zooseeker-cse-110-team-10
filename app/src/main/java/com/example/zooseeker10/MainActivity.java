@@ -12,16 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import android.widget.TextView;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
 
-    public ArrayList<String> selectedExhibitIds = new ArrayList<>();
+    public SelectedExhibits selectedExhibits;
     private RecyclerView recyclerView;
     private Button planButton;
     private EditText searchBarView;
@@ -33,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        selectedExhibits = new SelectedExhibits(this);
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
         searchBarView = findViewById(R.id.search_bar_view);
@@ -67,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onPlanButtonClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
-        intent.putStringArrayListExtra("exhibits", selectedExhibitIds);
+        intent.putStringArrayListExtra("exhibits", selectedExhibits.getExhibitIds());
         startActivity(intent);
     }
 
@@ -85,33 +82,19 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String exhibitId = data.getStringExtra("exhibitId");
-                selectExhibit(exhibitId);
-                updateAdapter();
+                this.selectedExhibits.addExhibit(exhibitId);
             }
         }
     }
 
-    public void selectExhibit(String exhibitId) {
-        if (selectedExhibitIds.isEmpty()) {
-            planButton.setVisibility(View.VISIBLE);
-        }
-        if (!selectedExhibitIds.contains(exhibitId)) {
-            selectedExhibitIds.add(0, exhibitId);
-            Log.d("MainActivity", exhibitId);
-        }
-    }
+    public void update() {
+            adapter.setSelectedExhibits(this.selectedExhibits.getExhibits());
+            if (this.selectedExhibits.getCount() > 0) {
+                planButton.setVisibility(View.VISIBLE);
+            }
 
-    public void updateAdapter() {
-            Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(this);
-            List<ZooData.VertexInfo> selectedExhibits = selectedExhibitIds.stream()
-                    .map(exhibits::get)
-                    .collect(Collectors.toList());
-
-
-            adapter.setSelectedExhibits(selectedExhibits);
-
-            exhibitsCountView.setText("(" + selectedExhibitIds.size() + ")");
-            Log.d("SelectedExhibitIds", selectedExhibitIds.toString());
+            exhibitsCountView.setText("(" + this.selectedExhibits.getCount() + ")");
+            Log.d("SelectedExhibitIds", this.selectedExhibits.getExhibitIds().toString());
     }
 
     public void onDeleteButtonClicked(View view) {
