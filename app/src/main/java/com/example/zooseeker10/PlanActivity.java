@@ -13,6 +13,7 @@ import org.jgrapht.Graph;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PlanActivity extends AppCompatActivity {
 
@@ -28,12 +29,21 @@ public class PlanActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        Graph<String, IdentifiedWeightedEdge> g;
-        g = ZooData.getZooGraph(this);
-        PathFinder pf = new PathFinder(g, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
+        Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(this);
+        Map<String, ZooData.VertexInfo> vertexInfos = ZooData.getVertexInfo(this);
+        PathFinder pf = new PathFinder(g, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
         Intent intent = getIntent();
         ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
-        plan = pf.findPath(exhibits);
+
+        List<String> vertexIDs = new ArrayList<>();
+        for (String exhibit : exhibits) {
+            ZooData.VertexInfo vertexInfo = vertexInfos.get(exhibit);
+            String vertexID = vertexInfo.hasGroup() ? vertexInfo.groupId : exhibit;
+            if (!vertexIDs.contains(vertexID)) {
+                vertexIDs.add(vertexID);
+            }
+        }
+        plan = pf.findPath(vertexIDs);
         List<PlanDistItem> items = plan.summarizePath(this);
         adapter.setPlanDistItems(items);
 

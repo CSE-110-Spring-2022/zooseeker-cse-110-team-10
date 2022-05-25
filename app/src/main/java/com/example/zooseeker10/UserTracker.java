@@ -38,6 +38,9 @@ public class UserTracker {
         double minDistance = Double.MAX_VALUE;
 
         for (var vertex : vertexInfoMap.values()) {
+            if (vertex.hasGroup()) {
+                continue;
+            }
             double currentDistance = getDistance(userLocation, vertex);
             if (currentDistance < minDistance) {
                 minDistance = currentDistance;
@@ -56,7 +59,7 @@ public class UserTracker {
      */
     public boolean needsReplan() {
         PathFinder pf =
-            new PathFinder(ZooData.getZooGraph(), ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
+            new PathFinder(ZooData.getZooGraph(), Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
 
         ZooData.VertexInfo currentVertex = getClosestVertex();
         Set<String> unvisitedExhibits = new HashSet<>(plan.getReplannable(walker));

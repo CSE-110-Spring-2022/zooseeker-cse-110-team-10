@@ -2,6 +2,7 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
@@ -30,13 +31,15 @@ public class DirectionsTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+
+        graph = ZooData.getZooGraph(context);
     }
 
     @Test
     public void testDirections() {
         ZooPlan plan = new ZooPlan(Arrays.asList(
-                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "arctic_foxes"), 310.0)
+                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "intxn_front_treetops", "intxn_front_monkey", "flamingo"), 5300.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
         intent.putExtra("paths", plan);
@@ -48,19 +51,24 @@ public class DirectionsTest {
 
         scenario.onActivity(activity -> {
             TextView t = activity.findViewById(R.id.directions_title);
-            assertEquals("Directions from Entrance and Exit Gate to Arctic Foxes", t.getText());
+            assertEquals("Directions from Entrance and Exit Gate to Flamingos", t.getText());
             RecyclerView rv = activity.findViewById(R.id.directions_list);
-            assertEquals(2, rv.getAdapter().getItemCount());
+            assertEquals(3, rv.getAdapter().getItemCount());
             RecyclerView.ViewHolder vh0 = rv.findViewHolderForAdapterPosition(0);
             assertEquals("From Entrance and Exit Gate", ((TextView)vh0.itemView.findViewById(R.id.directions_from_text)).getText());
-            assertEquals("Along Entrance Way", ((TextView)vh0.itemView.findViewById(R.id.directions_along_text)).getText());
-            assertEquals("To Entrance Plaza", ((TextView)vh0.itemView.findViewById(R.id.directions_to_text)).getText());
-            assertEquals("10.0 ft", ((TextView)vh0.itemView.findViewById(R.id.directions_distance_text)).getText());
+            assertEquals("Along Gate Path", ((TextView)vh0.itemView.findViewById(R.id.directions_along_text)).getText());
+            assertEquals("To Front Street / Treetops Way", ((TextView)vh0.itemView.findViewById(R.id.directions_to_text)).getText());
+            assertEquals("1100.0 ft", ((TextView)vh0.itemView.findViewById(R.id.directions_distance_text)).getText());
             RecyclerView.ViewHolder vh1 = rv.findViewHolderForAdapterPosition(1);
-            assertEquals("From Entrance Plaza", ((TextView)vh1.itemView.findViewById(R.id.directions_from_text)).getText());
-            assertEquals("Along Arctic Avenue", ((TextView)vh1.itemView.findViewById(R.id.directions_along_text)).getText());
-            assertEquals("To Arctic Foxes", ((TextView)vh1.itemView.findViewById(R.id.directions_to_text)).getText());
-            assertEquals("300.0 ft", ((TextView)vh1.itemView.findViewById(R.id.directions_distance_text)).getText());
+            assertEquals("From Front Street / Treetops Way", ((TextView)vh1.itemView.findViewById(R.id.directions_from_text)).getText());
+            assertEquals("Along Front Street", ((TextView)vh1.itemView.findViewById(R.id.directions_along_text)).getText());
+            assertEquals("To Front Street / Monkey Trail", ((TextView)vh1.itemView.findViewById(R.id.directions_to_text)).getText());
+            assertEquals("2700.0 ft", ((TextView)vh1.itemView.findViewById(R.id.directions_distance_text)).getText());
+            RecyclerView.ViewHolder vh2 = rv.findViewHolderForAdapterPosition(2);
+            assertEquals("From Front Street / Monkey Trail", ((TextView)vh2.itemView.findViewById(R.id.directions_from_text)).getText());
+            assertEquals("Along Monkey Trail", ((TextView)vh2.itemView.findViewById(R.id.directions_along_text)).getText());
+            assertEquals("To Flamingos", ((TextView)vh2.itemView.findViewById(R.id.directions_to_text)).getText());
+            assertEquals("1500.0 ft", ((TextView)vh2.itemView.findViewById(R.id.directions_distance_text)).getText());
         });
     }
 

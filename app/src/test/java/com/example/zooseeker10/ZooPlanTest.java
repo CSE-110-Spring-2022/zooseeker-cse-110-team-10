@@ -2,6 +2,8 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.*;
 
+import android.content.Context;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -27,7 +29,10 @@ public class ZooPlanTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
+        graph = ZooData.getZooGraph(context);
     }
 
     private static List<String> getIDs(List<IdentifiedWeightedEdge> edgeList) {
@@ -89,7 +94,7 @@ public class ZooPlanTest {
                 new GraphWalk<>(graph, Arrays.asList("gorillas", "entrance_plaza"), 200.0),
                 new GraphWalk<>(graph, Arrays.asList("entrance_plaza", "arctic_foxes"), 300.0)
         ));
-        ZooPlan.ZooWalker zw = plan.new ZooWalker(0);
+        ZooPlan.ZooWalker zw = plan.startWalker();
         List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
         assertEquals(1, explain.size());
         assertEquals("Gorillas", explain.get(0).from);
@@ -110,7 +115,7 @@ public class ZooPlanTest {
         ZooPlan plan = new ZooPlan(Arrays.asList(
                 new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "gators", "lions"), 310.0)
         ));
-        ZooPlan.ZooWalker zw = plan.new ZooWalker(0);
+        ZooPlan.ZooWalker zw = plan.startWalker();
         List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
         assertEquals(3, explain.size());
         assertEquals("Entrance and Exit Gate", explain.get(0).from);
