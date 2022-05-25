@@ -2,25 +2,21 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jgrapht.Graph;
-import org.jgrapht.GraphPath;
-import org.jgrapht.graph.GraphWalk;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RunWith(AndroidJUnit4.class)
 public class UserTrackerTest {
@@ -29,8 +25,9 @@ public class UserTrackerTest {
 
     @Before
     public void setup() {
-        Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(ApplicationProvider.getApplicationContext());
-        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.getVertexInfo(ApplicationProvider.getApplicationContext());
+        Context context = ApplicationProvider.getApplicationContext();
+        Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(context);
+        Map<String, ZooData.VertexInfo> vertexInfoMap = ZooData.getVertexInfo(context);
 
         List<String> exhibits = Arrays.asList("siamang", "orangutan", "hippo");
 
