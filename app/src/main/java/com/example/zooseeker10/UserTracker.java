@@ -59,12 +59,17 @@ public class UserTracker {
             new PathFinder(ZooData.getZooGraph(), ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
 
         ZooData.VertexInfo currentVertex = getClosestVertex();
-        Set<String> unvisitedExhibits = new HashSet<>(walker.getUnvisitedExhibits());
+        Set<String> unvisitedExhibits = new HashSet<>(plan.getReplannable(walker));
         GraphPath<String, IdentifiedWeightedEdge> path = pf.getShortestPathInSet(currentVertex.id, unvisitedExhibits);
 
         return !path.getEndVertex().equals(walker.getCurrentPath().getEndVertex());
     }
 
+    /**
+     * Determines whether a user
+     *
+     * @return whether a user is off-track
+     */
     public boolean isOffTrack() {
         return !walker.getCurrentPath().getVertexList().contains(getClosestVertex());
     }

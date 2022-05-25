@@ -19,6 +19,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
+
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,8 @@ public class DirectionsActivity extends AppCompatActivity {
     ZooPlan.ZooWalker walker;
     DirectionsListAdapter dLAdapter;
     Map<String, ZooData.VertexInfo> vertexInfo;
+    PathFinder pf;
+    String lastVertexLocation;
 
     enum Directions {
         FORWARD,
@@ -46,8 +51,9 @@ public class DirectionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_directions);
 
         Intent intent = getIntent();
-        plan = (ZooPlan)intent.getSerializableExtra("paths");
+        plan = (ZooPlan) intent.getSerializableExtra("paths");
         walker = plan.startWalker();
+        pf = new PathFinder(ZooData.getZooGraph(this), ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
@@ -62,7 +68,6 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Loads up initial page
         setDirectionsPage(Directions.BACKWARD);
-
         UserTracker userTracker = new UserTracker(plan, walker);
 
         /* Listen for Location Updates */
@@ -77,23 +82,40 @@ public class DirectionsActivity extends AppCompatActivity {
 
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     userTracker.setUserLocation(currentLocation);
-
+                    lastVertexLocation = userTracker.getClosestVertex().id;
                     if (userTracker.isOffTrack()) {
-                        Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
+                        recalculatePath();
                     }
                 }
             };
             locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
+
+            Location location = locationManager.getLastKnownLocation(provider);
+            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+            userTracker.setUserLocation(currentLatLng);
+            lastVertexLocation = userTracker.getClosestVertex().id;
+            if (userTracker.isOffTrack()) {
+                recalculatePath();
+            }
         }
 
         previousButton.setOnClickListener(
-                view -> { setDirectionsPage(Directions.BACKWARD); }
+                view -> {
+                    setDirectionsPage(Directions.BACKWARD);
+                }
         );
 
         nextButton.setOnClickListener(
-                view -> { setDirectionsPage(Directions.FORWARD); }
+                view -> {
+                    setDirectionsPage(Directions.FORWARD);
+                }
         );
 
+    }
+
+    public void recalculatePath() {
+        GraphPath<String, IdentifiedWeightedEdge> newPath = pf.getShortest(lastVertexLocation, walker.getCurrentPath().getEndVertex());
+        plan.replan(walker, newPath);
     }
 
     public void setDirectionsPage(Directions d) {

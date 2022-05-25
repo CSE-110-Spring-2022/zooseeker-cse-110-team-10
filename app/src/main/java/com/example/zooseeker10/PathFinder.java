@@ -75,6 +75,17 @@ public class PathFinder {
     }
 
     /**
+     * Finds the shortest path between two exhibits
+     *
+     * @param from the exhibit to start from
+     * @param to the exhibit to end at
+     * @return shortest path
+     */
+    public GraphPath<String, IdentifiedWeightedEdge> getShortest(@NonNull String from, @NonNull String to) {
+        return gD.getPath(from, to);
+    }
+
+    /**
      * Finds the shortest path from the start vertex to some vertex in the set
      *
      * @param startVertex the vertex to search paths from
