@@ -3,6 +3,8 @@ package com.example.zooseeker10;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import android.content.Context;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -26,9 +28,12 @@ public class PathFinderTest {
      */
     @Before
     public void setup() {
-        Graph<String, IdentifiedWeightedEdge> graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
 
-        pathfinder = new PathFinder(graph, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
+        Graph<String, IdentifiedWeightedEdge> graph = ZooData.getZooGraph(context);
+
+        pathfinder = new PathFinder(graph, Globals.ZooDataTest.ENTRANCE_GATE_ID, Globals.ZooDataTest.EXIT_GATE_ID);
     }
 
     private static List<String> getIDs(List<IdentifiedWeightedEdge> edgeList) {

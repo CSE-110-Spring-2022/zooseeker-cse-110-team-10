@@ -1,7 +1,8 @@
 package com.example.zooseeker10;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Arrays;
-import java.util.concurrent.locks.Condition;
 
 @RunWith(AndroidJUnit4.class)
 public class DirectionsNavTest {
@@ -33,8 +33,12 @@ public class DirectionsNavTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
+        graph = ZooData.getZooGraph(context);
     }
+
 
     @Test
     public void testDirectionsNav() {

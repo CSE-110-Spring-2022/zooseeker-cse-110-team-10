@@ -78,9 +78,9 @@ public class DirectionsActivity extends AppCompatActivity {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     userTracker.setUserLocation(currentLocation);
 
-                    if (userTracker.isOffTrack()) {
-                        Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
-                    }
+//                    if (userTracker.isOffTrack()) {
+//                        Log.d("DirectionsActivity", String.format("BRUH YOU OFF TRACK!! GET OUTTA HERE"));
+//                    }
                 }
             };
             locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
