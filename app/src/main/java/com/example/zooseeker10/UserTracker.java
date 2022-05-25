@@ -29,6 +29,10 @@ public class UserTracker {
         this.userLocation = LatLngs.DEFAULT_LOCATION;
     }
 
+    public LatLng getUserLocation() {
+        return this.userLocation;
+    }
+
     public void setUserLocation(LatLng userLocation) {
         this.userLocation = userLocation;
     }
