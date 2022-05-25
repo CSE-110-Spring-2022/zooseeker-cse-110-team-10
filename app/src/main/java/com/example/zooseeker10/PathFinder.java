@@ -45,7 +45,7 @@ public class PathFinder {
     /**
      * Finds a pretty bad shortest path visiting a given list of exhibits, starting at a given vertex
      *
-     * @param exhibitsToVisit the IDs of exhibits to be visited in the generated path
+     * @param exhibitsToVisit the group IDs of exhibits to be visited in the generated path
      * @param from the exhibit for the plan to start from
      * @return a pretty bad shortest path
      */
