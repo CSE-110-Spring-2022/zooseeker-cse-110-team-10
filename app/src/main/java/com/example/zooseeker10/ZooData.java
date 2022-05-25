@@ -28,12 +28,6 @@ import org.jgrapht.graph.DefaultUndirectedWeightedGraph;
 import org.jgrapht.nio.json.JSONImporter;
 
 public class ZooData {
-    public static final String ZOO_GRAPH_PATH = "zoo_graph.json";
-    public static final String NODE_INFO_PATH = "exhibit_info.json";
-    public static final String EDGE_INFO_PATH = "trail_info.json";
-    public static final String ENTRANCE_GATE_ID = "entrance_exit_gate";
-    public static final String EXIT_GATE_ID = "entrance_exit_gate";
-
     private static Map<String, VertexInfo> vertexInfo;
     private static Map<String, EdgeInfo> edgeInfo;
     private static Graph<String, IdentifiedWeightedEdge> zooGraph;
@@ -122,9 +116,9 @@ public class ZooData {
             this.lat = lat;
             this.lng = lng;
 
-            if (!this.hasGroup() && (lat == null || lng == null)) {
-                throw new RuntimeException("Nodes must have a lat/long unless they are grouped.");
-            }
+//            if (!this.hasGroup() && (lat == null || lng == null)) {
+//                throw new RuntimeException("Nodes must have a lat/long unless they are grouped.");
+//            }
         }
 
         @Override
@@ -158,7 +152,7 @@ public class ZooData {
 
     public static Map<String, ZooData.VertexInfo> getVertexInfo(Context context) {
         if (vertexInfo == null) {
-            vertexInfo = loadVertexInfoJSON(context, NODE_INFO_PATH);
+            vertexInfo = loadVertexInfoJSON(context, Globals.ZooData.NODE_INFO_PATH);
         }
         return vertexInfo;
     }
@@ -189,7 +183,7 @@ public class ZooData {
 
     public static Map<String, ZooData.EdgeInfo> getEdgeInfo(Context context) {
         if (edgeInfo == null) {
-            edgeInfo = loadEdgeInfoJSON(context, EDGE_INFO_PATH);
+            edgeInfo = loadEdgeInfoJSON(context, Globals.ZooData.EDGE_INFO_PATH);
         }
         return edgeInfo;
     }
@@ -216,7 +210,7 @@ public class ZooData {
 
     public static Graph<String, IdentifiedWeightedEdge> getZooGraph(Context context) {
         if (zooGraph == null) {
-            zooGraph = loadZooGraphJSON(context, ZOO_GRAPH_PATH);
+            zooGraph = loadZooGraphJSON(context, Globals.ZooData.ZOO_GRAPH_PATH);
         }
         return zooGraph;
     }

@@ -31,7 +31,7 @@ public class PlanActivity extends AppCompatActivity {
 
         Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(this);
         Map<String, ZooData.VertexInfo> vertexInfos = ZooData.getVertexInfo(this);
-        PathFinder pf = new PathFinder(g, ZooData.ENTRANCE_GATE_ID, ZooData.EXIT_GATE_ID);
+        PathFinder pf = new PathFinder(g, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
         Intent intent = getIntent();
         ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
 

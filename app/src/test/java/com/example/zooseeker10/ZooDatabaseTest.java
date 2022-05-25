@@ -29,6 +29,8 @@ public class ZooDatabaseTest {
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
         db = Room.inMemoryDatabaseBuilder(context, ZooDatabase.class)
                 .allowMainThreadQueries()
                 .build();

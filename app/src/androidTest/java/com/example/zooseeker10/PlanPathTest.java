@@ -2,6 +2,7 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
@@ -11,11 +12,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
 public class PlanPathTest {
+    @Before
+    public void setup() {
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+    }
 
     @Test
     public void planButtonInvisible() {
