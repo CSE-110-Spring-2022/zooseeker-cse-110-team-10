@@ -29,6 +29,8 @@ public class ZooDatabaseTest {
     @Before
     public void createDb() {
         Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
         db = Room.inMemoryDatabaseBuilder(context, ZooDatabase.class)
                 .allowMainThreadQueries()
                 .build();
@@ -56,7 +58,7 @@ public class ZooDatabaseTest {
         List<ZooData.VertexInfo> allVertices = dao.getAll();
 
         ZooData.VertexInfo newVertex =
-                new ZooData.VertexInfo("test-id", ZooData.VertexInfo.Kind.EXHIBIT, "Test", new ArrayList<>());
+                new ZooData.VertexInfo("test-id", "test-group", ZooData.VertexInfo.Kind.EXHIBIT, "Test", new ArrayList<>(), 0.0, 0.0);
 
         dao.insert(newVertex);
 

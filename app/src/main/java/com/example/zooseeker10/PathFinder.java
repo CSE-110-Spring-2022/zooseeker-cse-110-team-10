@@ -33,16 +33,27 @@ public class PathFinder {
     }
 
     /**
-     * Finds a pretty bad shortest path given a list of exhibits that must be visited
+     * Finds a pretty bad shortest path visiting a given list of exhibits, starting at the entrance ID
      *
      * @param exhibitsToVisit the IDs of exhibits to be visited in the generated path
      * @return a pretty bad shortest path
      */
     public ZooPlan findPath(@NonNull List<String> exhibitsToVisit) {
+        return findPath(exhibitsToVisit, this.entranceID);
+    }
+
+    /**
+     * Finds a pretty bad shortest path visiting a given list of exhibits, starting at a given vertex
+     *
+     * @param exhibitsToVisit the group IDs of exhibits to be visited in the generated path
+     * @param from the exhibit for the plan to start from
+     * @return a pretty bad shortest path
+     */
+    public ZooPlan findPath(@NonNull List<String> exhibitsToVisit, @NonNull String from) {
         List<GraphPath<String, IdentifiedWeightedEdge>> paths = new ArrayList<>();
 
         Set<String> unvisitedExhibits = new HashSet<>(exhibitsToVisit);
-        String currVertex = entranceID;
+        String currVertex = from;
 
         // Traverse from current node to node in unvisitedExhibits
         while (unvisitedExhibits.size() > 0) {

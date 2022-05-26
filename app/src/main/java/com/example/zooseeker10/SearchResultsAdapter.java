@@ -66,7 +66,15 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         public void setSearchResult(ZooData.VertexInfo searchResult) {
             this.searchResult = searchResult;
-            this.textView.setText(this.searchResult.name);
+            String name = this.searchResult.name;
+
+            // Add group name if exhibit has a group
+            if (searchResult.hasGroup()) {
+                String groupId = searchResult.groupId;
+                String group = ZooData.getVertexInfo().get(groupId).name;
+                name += String.format(" (%s)", group);
+            }
+            this.textView.setText(name);
         }
     }
 }

@@ -1,21 +1,25 @@
 package com.example.zooseeker10;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
     public SelectedExhibits selectedExhibits;
     private RecyclerView recyclerView;
@@ -30,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         selectedExhibits = new SelectedExhibits(this);
+
+        /* Permissions Setup */
+        permissionChecker.ensurePermissions();
+
         planButton = findViewById(R.id.plan_btn);
         recyclerView = findViewById(R.id.selected_exhibits);
         searchBarView = findViewById(R.id.search_bar_view);
@@ -39,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        setUpData();
+    }
+
+    private void setUpData() {
+        ZooData.getVertexInfo(this);
         Intent intent = new Intent(this, SearchResultsActivity.class);
         intent.putExtra("dummy", true);
         startActivity(intent);
@@ -88,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update() {
-            adapter.setSelectedExhibits(this.selectedExhibits.getExhibits());
+            adapter.setSelectedExhibits(this.selectedExhibits.getExhibitIDs());
             if (this.selectedExhibits.getCount() > 0) {
                 planButton.setVisibility(View.VISIBLE);
             }
@@ -98,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onDeleteButtonClicked(View view) {
-        selectedExhibitIds.clear();
-        exhibitsCountView.setText("(" + selectedExhibitIds.size() + ")");
+        selectedExhibits.clear();
+        exhibitsCountView.setText("(" + selectedExhibits.getCount() + ")");
         adapter.clear();
         planButton.setVisibility(View.INVISIBLE);
     }

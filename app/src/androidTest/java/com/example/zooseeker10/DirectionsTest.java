@@ -2,6 +2,7 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.TextView;
@@ -30,7 +31,10 @@ public class DirectionsTest {
      */
     @Before
     public void setup() {
-        graph = ZooData.loadZooGraphJSON(ApplicationProvider.getApplicationContext(), ZooData.ZOO_GRAPH_PATH);
+        Context context = ApplicationProvider.getApplicationContext();
+        Globals.ZooDataTest.setLegacy(context);
+
+        graph = ZooData.getZooGraph(context);
     }
 
     @Test

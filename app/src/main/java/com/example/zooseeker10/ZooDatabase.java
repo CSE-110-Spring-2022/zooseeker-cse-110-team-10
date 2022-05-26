@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-@Database(entities = {ZooData.VertexInfo.class}, version = 1, exportSchema = false)
+@Database(entities = {ZooData.VertexInfo.class}, version = 2, exportSchema = false)
 @TypeConverters({TagsConverter.class})
 public abstract class ZooDatabase extends RoomDatabase {
     private static ZooDatabase singleton = null;

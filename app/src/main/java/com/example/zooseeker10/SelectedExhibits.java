@@ -2,6 +2,7 @@ package com.example.zooseeker10;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SelectedExhibits {
+
     private final Context context;
     private ArrayList<String> selectedExhibitIds;
 
@@ -25,18 +27,22 @@ public class SelectedExhibits {
         }
     }
 
-    public ArrayList<String> getExhibitIds() {
+    public ArrayList<String> getExhibitIds(){
         return this.selectedExhibitIds;
     }
 
-    public List<ZooData.VertexInfo> getExhibits() {
-        Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(context);
-        return this.selectedExhibitIds.stream()
-                .map(exhibits::get)
-                .collect(Collectors.toList());
+    public List<ZooData.VertexInfo> getExhibitIDs() {
+            Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(context);
+            return this.selectedExhibitIds.stream()
+                    .map(exhibits::get)
+                    .collect(Collectors.toList());
     }
 
     public int getCount() {
         return this.selectedExhibitIds.size();
+    }
+
+    public void clear() {
+        this.selectedExhibitIds = new ArrayList<>();
     }
 }
