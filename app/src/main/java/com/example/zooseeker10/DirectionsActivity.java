@@ -91,11 +91,11 @@ public class DirectionsActivity extends AppCompatActivity {
         }
 
         previousButton.setOnClickListener(
-                view -> { setDirectionsPage(Directions.BACKWARD); }
+                view -> { setDirectionsPage(Directions.BACKWARD); updateDirectionsType();}
         );
 
         nextButton.setOnClickListener(
-                view -> { setDirectionsPage(Directions.FORWARD); }
+                view -> { setDirectionsPage(Directions.FORWARD); updateDirectionsType();}
         );
 
     }
