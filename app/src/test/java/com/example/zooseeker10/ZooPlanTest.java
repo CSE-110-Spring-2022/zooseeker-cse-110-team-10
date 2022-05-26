@@ -95,14 +95,14 @@ public class ZooPlanTest {
                 new GraphWalk<>(graph, Arrays.asList("entrance_plaza", "arctic_foxes"), 300.0)
         ));
         ZooPlan.ZooWalker zw = plan.startWalker();
-        List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
+        List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext(),false);
         assertEquals(1, explain.size());
         assertEquals("Gorillas", explain.get(0).from);
         assertEquals("Entrance Plaza", explain.get(0).to);
         assertEquals("Africa Rocks Street", explain.get(0).street);
         assertEquals(200.0, explain.get(0).dist, DOUBLE_EPSILON);
         zw.traverseForward();
-        explain = zw.explainPath(ApplicationProvider.getApplicationContext());
+        explain = zw.explainPath(ApplicationProvider.getApplicationContext(),false);
         assertEquals(1, explain.size());
         assertEquals("Entrance Plaza", explain.get(0).from);
         assertEquals("Arctic Foxes", explain.get(0).to);
@@ -116,7 +116,7 @@ public class ZooPlanTest {
                 new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "gators", "lions"), 310.0)
         ));
         ZooPlan.ZooWalker zw = plan.startWalker();
-        List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext());
+        List<DirectionsItem> explain = zw.explainPath(ApplicationProvider.getApplicationContext(),false);
         assertEquals(3, explain.size());
         assertEquals("Entrance and Exit Gate", explain.get(0).from);
         assertEquals("Entrance Plaza", explain.get(0).to);

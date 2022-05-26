@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -23,10 +24,13 @@ import java.util.List;
 import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    public static boolean briefDirections;
 
     public static boolean callReplan;
     Button previousButton;
     Button nextButton;
+    ImageButton settingsButton;
     TextView directionsTitle;
 
     ZooPlan plan;
@@ -52,6 +56,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
+        settingsButton = findViewById(R.id.settings_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -95,6 +100,31 @@ public class DirectionsActivity extends AppCompatActivity {
 
     }
 
+    public void onSettingsButtonClicked(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                briefDirections = data.getBooleanExtra("key", false);
+                updateDirectionsType();
+            }
+        }
+    }
+
+    public void updateDirectionsType(){
+        List<DirectionsItem> displayedDirections = walker.explainPath(this, briefDirections);
+        dLAdapter.setDirectionsItems(displayedDirections);
+        directionsTitle.setText(String.format("Directions from %s to %s",
+                displayedDirections.get(0).from,
+                displayedDirections.get(displayedDirections.size() - 1).to
+        ));
+    }
+
     public void setDirectionsPage(Directions d) {
         if (d == Directions.FORWARD){
             walker.traverseForward();
@@ -114,7 +144,7 @@ public class DirectionsActivity extends AppCompatActivity {
             nextButton.setVisibility(View.VISIBLE);
         }
 
-        List<DirectionsItem> displayedDirections = walker.explainPath(this);
+        List<DirectionsItem> displayedDirections = walker.explainPath(this,false);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
                 displayedDirections.get(0).from,

@@ -6,10 +6,10 @@ public class DirectionsItem {
     public String street;
     public double dist;
 
-    public DirectionsItem(String from, String to, String street, double dist) {
-        this.from = from;
-        this.to = to;
-        this.street = street;
-        this.dist = dist;
+    public DirectionsItem(String from, String to, String street, double dist){
+        this.from=from;
+        this.to=to;
+        this.street=street;
+        this.dist=dist;
     }
 }
