@@ -1,5 +1,7 @@
 package com.example.zooseeker10;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +52,15 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         setUpData();
+
+        // Goes to DirectionsActivity only if state file exists
+        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+        File directory = contextWrapper.getDir(Globals.Directions.STATE_FILEPATH, Context.MODE_PRIVATE);
+        File directionsStateFile = new File(directory, Globals.Directions.STATE_FILENAME);
+        if (directionsStateFile.exists()) {
+            Intent intent =  new Intent(this, DirectionsActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void setUpData() {
@@ -104,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
             adapter.setSelectedExhibits(this.selectedExhibits.getExhibitIDs());
             if (this.selectedExhibits.getCount() > 0) {
                 planButton.setVisibility(View.VISIBLE);
+            } else {
+                planButton.setVisibility(View.INVISIBLE);
             }
 
             exhibitsCountView.setText("(" + this.selectedExhibits.getCount() + ")");
@@ -113,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     public void onDeleteButtonClicked(View view) {
         selectedExhibits.clear();
         exhibitsCountView.setText("(" + selectedExhibits.getCount() + ")");
-        adapter.clear();
-        planButton.setVisibility(View.INVISIBLE);
+        update();
     }
 }

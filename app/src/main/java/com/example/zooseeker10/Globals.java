@@ -25,4 +25,8 @@ public class Globals {
         }
     }
 
+    public static class Directions {
+        public static final String STATE_FILENAME = "directions_activity_state";
+        public static final String STATE_FILEPATH = "DirectionsState";
+    }
 }

@@ -1,6 +1,8 @@
 package com.example.zooseeker10;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.jgrapht.Graph;
@@ -22,7 +24,7 @@ public class ZooPlan implements Serializable {
      * ZooWalker is used to keep track of the current position of the user
      * within the ZooPath
      */
-    public class ZooWalker {
+    public class ZooWalker implements Serializable {
         private int currentIndex;
 
         /**

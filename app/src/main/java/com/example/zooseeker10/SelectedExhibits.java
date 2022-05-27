@@ -44,5 +44,7 @@ public class SelectedExhibits {
 
     public void clear() {
         this.selectedExhibitIds = new ArrayList<>();
+        Log.d("MainActivity", "CLEARED");
+        ((MainActivity) context).update();
     }
 }

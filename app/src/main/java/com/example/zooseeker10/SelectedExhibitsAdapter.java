@@ -37,11 +37,6 @@ public class SelectedExhibitsAdapter extends RecyclerView.Adapter<SelectedExhibi
         holder.setSelectedExhibit(this.selectedExhibits.get(position));
     }
 
-    public void clear() {
-        selectedExhibits.clear();
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
         return this.selectedExhibits.size();
