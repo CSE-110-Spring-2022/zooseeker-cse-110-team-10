@@ -67,6 +67,9 @@ public class UserTracker {
 
         ZooData.VertexInfo currentVertex = getClosestVertex();
         Set<String> unvisitedExhibits = new HashSet<>(plan.getReplannable(walker));
+        if (unvisitedExhibits.isEmpty()) {
+            return false;
+        }
         GraphPath<String, IdentifiedWeightedEdge> path = pf.getShortestPathInSet(currentVertex.id, unvisitedExhibits);
 
         return !path.getEndVertex().equals(walker.getCurrentPath().getEndVertex());

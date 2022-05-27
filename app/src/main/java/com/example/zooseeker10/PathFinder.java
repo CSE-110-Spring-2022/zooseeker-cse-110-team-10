@@ -17,6 +17,7 @@ public class PathFinder {
     Graph<String, IdentifiedWeightedEdge> graph;
     String entranceID;
     String exitID;
+    boolean replanAsked;
 
     /**
      * Constructs a PathFinder object

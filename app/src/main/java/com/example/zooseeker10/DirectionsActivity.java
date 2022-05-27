@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
 
 import java.util.List;
@@ -27,7 +26,6 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
 
-    public static boolean callReplan;
     Button previousButton;
     Button nextButton;
     TextView directionsTitle;
@@ -38,11 +36,7 @@ public class DirectionsActivity extends AppCompatActivity {
     Map<String, ZooData.VertexInfo> vertexInfo;
     PathFinder pf;
     String lastVertexLocation;
-
-    enum Directions {
-        FORWARD,
-        BACKWARD
-    }
+    ReplanPrompt replanPrompt;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -67,7 +61,7 @@ public class DirectionsActivity extends AppCompatActivity {
         recyclerView.setAdapter(dLAdapter);
 
         // Loads up initial page
-        setDirectionsPage(Directions.BACKWARD);
+        reloadDirectionsPage();
         UserTracker userTracker = new UserTracker(plan, walker);
 
         /* Listen for Location Updates */
@@ -83,6 +77,10 @@ public class DirectionsActivity extends AppCompatActivity {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     userTracker.setUserLocation(currentLocation);
                     lastVertexLocation = userTracker.getClosestVertex().id;
+                    if (userTracker.needsReplan()) {
+                        Log.d("DirectionsActivity", "replan asked");
+                        replanPrompt.showPrompt();
+                    }
                     if (userTracker.isOffTrack()) {
                         recalculatePath();
                     }
@@ -99,17 +97,19 @@ public class DirectionsActivity extends AppCompatActivity {
             }
         }
 
-        previousButton.setOnClickListener(
-                view -> {
-                    setDirectionsPage(Directions.BACKWARD);
-                }
-        );
+        replanPrompt = new ReplanPrompt(this);
 
-        nextButton.setOnClickListener(
-                view -> {
-                    setDirectionsPage(Directions.FORWARD);
-                }
-        );
+        previousButton.setOnClickListener(view -> {
+            replanPrompt.enablePrompt();
+            walker.traverseBackward();
+            reloadDirectionsPage();
+        });
+
+        nextButton.setOnClickListener(view -> {
+            replanPrompt.enablePrompt();
+            walker.traverseForward();
+            reloadDirectionsPage();
+        });
 
     }
 
@@ -118,30 +118,25 @@ public class DirectionsActivity extends AppCompatActivity {
         plan.replan(walker, newPath);
     }
 
-    public void setDirectionsPage(Directions d) {
-        if (d == Directions.FORWARD){
-            walker.traverseForward();
-        }
-        else {
-            walker.traverseBackward();
-        }
+    public void reloadDirectionsPage() {
+        // set visibility of previous/next buttons by hasPrevious/hasNext
+        previousButton.setVisibility(walker.hasPrevious() ? View.VISIBLE : View.INVISIBLE);
+        nextButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
 
-        if (!walker.hasPrevious()) {
-            previousButton.setVisibility(View.INVISIBLE);
-        } else {
-            previousButton.setVisibility(View.VISIBLE);
-        }
-        if (!walker.hasNext()) {
-            nextButton.setVisibility(View.INVISIBLE);
-        } else {
-            nextButton.setVisibility(View.VISIBLE);
-        }
-
+        // update visible directions
         List<DirectionsItem> displayedDirections = walker.explainPath(this);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
                 displayedDirections.get(0).from,
                 displayedDirections.get(displayedDirections.size() - 1).to
         ));
+    }
+
+    public void onReplanRequested() {
+        replanPrompt.enablePrompt();
+        List<String> replannableExhibits = plan.getReplannable(walker);
+        ZooPlan newPlan = pf.findPath(replannableExhibits, lastVertexLocation);
+        plan.replan(walker, newPlan);
+        reloadDirectionsPage();
     }
 }
