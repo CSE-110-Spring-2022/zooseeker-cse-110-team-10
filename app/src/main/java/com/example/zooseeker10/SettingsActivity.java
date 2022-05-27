@@ -25,14 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
-                    directionsType=true;
-                    Log.d("Directions Type", "True");
-                }
-                else{
-                    directionsType=false;
-                    Log.d("Directions Type", "False");
-                }
+                directionsType=isChecked;
             }
         });
     }
