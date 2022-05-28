@@ -37,6 +37,7 @@ public class DirectionsActivity extends AppCompatActivity {
     PathFinder pf;
     String lastVertexLocation;
     ReplanPrompt replanPrompt;
+    UserTracker userTracker;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -62,7 +63,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         // Loads up initial page
         reloadDirectionsPage();
-        UserTracker userTracker = new UserTracker(plan, walker);
+        userTracker = new UserTracker(plan, walker);
 
         /* Listen for Location Updates */
         {
@@ -77,12 +78,12 @@ public class DirectionsActivity extends AppCompatActivity {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     userTracker.setUserLocation(currentLocation);
                     lastVertexLocation = userTracker.getClosestVertex().id;
-                    if (userTracker.needsReplan()) {
-                        Log.d("DirectionsActivity", "replan asked");
-                        replanPrompt.showPrompt();
-                    }
                     if (userTracker.isOffTrack()) {
                         recalculatePath();
+                        if (userTracker.needsReplan()) {
+                            Log.d("DirectionsActivity", "replan asked");
+                            replanPrompt.showPrompt();
+                        }
                     }
                 }
             };
