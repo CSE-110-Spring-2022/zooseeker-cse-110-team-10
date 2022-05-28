@@ -1,7 +1,5 @@
 package com.example.zooseeker10;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,16 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
@@ -53,14 +44,18 @@ public class MainActivity extends AppCompatActivity {
 
         setUpData();
 
-        // Goes to DirectionsActivity only if state file exists
-        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-        File directory = contextWrapper.getDir(Globals.Directions.STATE_FILEPATH, Context.MODE_PRIVATE);
-        File directionsStateFile = new File(directory, Globals.Directions.STATE_FILENAME);
-        if (directionsStateFile.exists()) {
-            Intent intent =  new Intent(this, DirectionsActivity.class);
-            startActivity(intent);
-        }
+        // Garbage way of passing the activity. Refactor later.
+        Globals.State.activity = this;
+
+        StateManager.loadLastActiveActivity(this);
+        update();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        StateManager.storeMainState(selectedExhibits);
     }
 
     private void setUpData() {

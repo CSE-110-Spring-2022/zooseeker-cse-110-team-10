@@ -7,25 +7,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -41,8 +33,6 @@ public class DirectionsActivity extends AppCompatActivity {
     DirectionsListAdapter dLAdapter;
     Map<String, ZooData.VertexInfo> vertexInfo;
 
-    File stateFile;
-
     /**
      * Source: https://www.mysamplecode.com/2012/06/android-internal-external-storage.html
      *
@@ -54,20 +44,10 @@ public class DirectionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_directions);
 
-        ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
-        File directory = contextWrapper.getDir(Globals.Directions.STATE_FILEPATH, Context.MODE_PRIVATE);
-        stateFile = new File(directory, Globals.Directions.STATE_FILENAME);
-
-        if (!stateFile.exists()) {
-            Intent intent = getIntent();
-            plan = (ZooPlan)intent.getSerializableExtra("paths");
-            walker = plan.startWalker();
-
-            storeState();
-        }
-        else {
-            loadState();
-        }
+        Intent intent = getIntent();
+        plan = (ZooPlan) intent.getSerializableExtra(Globals.MapKeys.ZOOPLAN);
+        int walkerIndex = intent.getIntExtra(Globals.MapKeys.WALKER_INDEX, 0);
+        walker = plan.new ZooWalker(walkerIndex);
 
         vertexInfo = ZooData.getVertexInfo(this);
 
@@ -122,92 +102,15 @@ public class DirectionsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        loadState();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
 
-        storeState();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        storeState();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        loadState();
-    }
-
-    private void storeState() {
-        try {
-            // Saving of object in a file
-            FileOutputStream file = new FileOutputStream
-                    (stateFile);
-            ObjectOutputStream out = new ObjectOutputStream
-                    (file);
-
-            // Method for serialization of object
-            out.writeObject(plan);
-            out.writeObject(walker);
-            Log.d("Directions", "Directions state has been stored");
-
-            out.close();
-            file.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadState() {
-        try {
-
-            // Reading the object from a file
-            FileInputStream file = new FileInputStream
-                    (stateFile);
-            ObjectInputStream in = new ObjectInputStream
-                    (file);
-
-            // Method for deserialization of object
-            plan = (ZooPlan) in.readObject();
-            walker = (ZooPlan.ZooWalker) in.readObject();
-            Log.d("Directions", "Directions state has been loaded");
-
-            in.close();
-            file.close();
-        }
-
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        StateManager.storeDirectionsState(plan, walker.getCurrentExhibitIndex());
     }
 
     public void refreshDirections() {
-        if (!walker.hasPrevious()) {
-            previousButton.setVisibility(View.INVISIBLE);
-        } else {
-            previousButton.setVisibility(View.VISIBLE);
-        }
-        if (!walker.hasNext()) {
-            nextButton.setVisibility(View.INVISIBLE);
-        } else {
-            nextButton.setVisibility(View.VISIBLE);
-        }
+        previousButton.setVisibility((walker.hasPrevious()) ? View.VISIBLE : View.INVISIBLE);
+        nextButton.setVisibility((walker.hasNext()) ? View.VISIBLE : View.INVISIBLE);
 
         List<DirectionsItem> displayedDirections = walker.explainPath(this);
         dLAdapter.setDirectionsItems(displayedDirections);

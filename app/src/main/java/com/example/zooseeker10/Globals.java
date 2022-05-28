@@ -25,8 +25,20 @@ public class Globals {
         }
     }
 
-    public static class Directions {
-        public static final String STATE_FILENAME = "directions_activity_state";
-        public static final String STATE_FILEPATH = "DirectionsState";
+    public static class State {
+        public static MainActivity activity; // TODO: Kinda cringe.
+        public static final String DIRECTORY_PATH = "state";
+        public static final String ACTIVE_STATE_FILENAME = "active_state";
+        public static final String MAIN_FILENAME = "main_activity_state";
+        public static final String PLAN_FILENAME = "plan_activity_state";
+        public static final String DIRECTIONS_FILENAME = "directions_activity_state";
+    }
+
+    public static class MapKeys {
+        public static final String STATE = "country";
+        public static final String SELECTED_EXHIBIT_IDS = "mamamiagetinthepizzeria";
+        public static final String ZOOPLAN = ":flushed: :flushed: :flushed: :pleading:";
+        public static final String WALKER_INDEX = "invalidsidlepromise";
+
     }
 }

@@ -29,11 +29,27 @@ public class PlanActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        Intent intent = getIntent();
+        if (intent.hasExtra(Globals.MapKeys.ZOOPLAN)) {
+            plan = (ZooPlan) intent.getSerializableExtra(Globals.MapKeys.ZOOPLAN);
+        }
+        else if (intent.hasExtra("exhibits")) {
+            ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
+            plan = generatePlan(exhibits);
+        }
+        else {
+            throw new IllegalStateException("PlanActivity unknown state");
+        }
+        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
+
+        List<PlanDistItem> items = plan.summarizePath(this);
+        adapter.setPlanDistItems(items);
+    }
+
+    private ZooPlan generatePlan(ArrayList<String> exhibits) {
         Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(this);
         Map<String, ZooData.VertexInfo> vertexInfos = ZooData.getVertexInfo(this);
         PathFinder pf = new PathFinder(g, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
-        Intent intent = getIntent();
-        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
 
         List<String> vertexIDs = new ArrayList<>();
         for (String exhibit : exhibits) {
@@ -43,19 +59,25 @@ public class PlanActivity extends AppCompatActivity {
                 vertexIDs.add(vertexID);
             }
         }
-        plan = pf.findPath(vertexIDs);
-        List<PlanDistItem> items = plan.summarizePath(this);
-        adapter.setPlanDistItems(items);
+        return pf.findPath(vertexIDs);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        StateManager.storePlanState(plan);
     }
 
     public void onDirectionsBtnClicked(View view) {
         Intent intent = new Intent(this, DirectionsActivity.class);
         Log.d("PlanActivity", "TODO");
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         startActivity(intent);
     }
 
     public void onRestartPlanButtonClicked(View view) {
+        StateManager.storeMainState(new SelectedExhibits(Globals.State.activity));
         adapter.clear(); // TODO: Clear the plan and then update the adapter.
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
