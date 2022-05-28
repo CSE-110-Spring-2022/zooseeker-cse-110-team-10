@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
-    public static boolean briefDirections;
+    public static boolean isBriefDirections;
 
     public static boolean callReplan;
     Button previousButton;
@@ -100,24 +100,41 @@ public class DirectionsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Citation:
+     * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+     * Sending the data back to main activity in android
+     * May 27th, 2022
+     * Used mainly as a source of info and template for opening a new activity for result
+     * D.J
+     */
     public void onSettingsButtonClicked(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
+        Log.d("Settings Activity: ", "Started");
         startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
     }
 
+    /**
+     * Citation:
+     * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+     * Sending the data back to main activity in android
+     * May 27th, 2022
+     * Used mainly as a source of info and template for retrieving data from a finished activity
+     * D.J
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                briefDirections = data.getBooleanExtra("key", false);
+                isBriefDirections = data.getBooleanExtra("key", false);
                 updateDirectionsType();
             }
         }
     }
 
     public void updateDirectionsType(){
-        List<DirectionsItem> displayedDirections = walker.explainPath(this, briefDirections);
+        List<DirectionsItem> displayedDirections = walker.explainPath(this, isBriefDirections);
         dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions from %s to %s",
                 displayedDirections.get(0).from,

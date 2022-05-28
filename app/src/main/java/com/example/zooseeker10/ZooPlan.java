@@ -116,17 +116,17 @@ public class ZooPlan implements Serializable {
          * to be used in DirectionsActivity.
          *
          * @param context the current context
-         * @param briefDirections
+         * @param isBriefDirections
          * @return list of DirectionsItem for the current subpath
          */
-        public List<DirectionsItem> explainPath(Context context, boolean briefDirections) {
+        public List<DirectionsItem> explainPath(Context context, boolean isBriefDirections) {
             Map<String, ZooData.VertexInfo> vertexInfo = ZooData.getVertexInfo(context);
             Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.getEdgeInfo(context);
             Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(context);
             List<DirectionsItem> explains = new ArrayList<>();
             Iterator<String> vs = plan.get(currentIndex).getVertexList().iterator();
             Iterator<IdentifiedWeightedEdge> es = plan.get(currentIndex).getEdgeList().iterator();
-            if(briefDirections){
+            if(isBriefDirections){
                 String currentStreet = null;
                 String currentStreetStart = vs.next();
                 String currentStreetEnd = null;
@@ -157,6 +157,7 @@ public class ZooPlan implements Serializable {
                         currentStreet,
                         currentStreetLen
                 ));
+                Log.d("SIZE: ", ""+explains.size());
             }
             else{
                 String lastVertex = vs.next();
