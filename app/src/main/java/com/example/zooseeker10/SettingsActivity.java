@@ -10,7 +10,7 @@ import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SettingsActivity extends AppCompatActivity {
-    private boolean isBriefDirections = false;
+    private static boolean isBriefDirections = false;
     private Switch toggle;
 
     /**
@@ -27,6 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
 
         toggle = findViewById(R.id.directions_type_switch);
+        toggle.setChecked(isBriefDirections);
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
