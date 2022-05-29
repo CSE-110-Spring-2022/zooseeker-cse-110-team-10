@@ -1,5 +1,7 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jgrapht.GraphPath;
@@ -67,6 +69,9 @@ public class UserTracker {
 
         ZooData.VertexInfo currentVertex = getClosestVertex();
         Set<String> unvisitedExhibits = new HashSet<>(plan.getReplannable(walker));
+        if (unvisitedExhibits.isEmpty()) {
+            return false;
+        }
         GraphPath<String, IdentifiedWeightedEdge> path = pf.getShortestPathInSet(currentVertex.id, unvisitedExhibits);
 
         return !path.getEndVertex().equals(walker.getCurrentPath().getEndVertex());
@@ -78,7 +83,9 @@ public class UserTracker {
      * @return whether a user is off-track
      */
     public boolean isOffTrack() {
-        return !walker.getCurrentPath().getVertexList().contains(getClosestVertex());
+        String closestVertexId = this.getClosestVertex().id;
+        boolean onPath = walker.getCurrentPath().getVertexList().contains(closestVertexId);
+        return !onPath;
     }
 
     /**
