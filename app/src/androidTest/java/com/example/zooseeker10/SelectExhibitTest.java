@@ -2,16 +2,13 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -20,7 +17,7 @@ public class SelectExhibitTest {
 
     @Test
     public void addSelectExhibitDuplicateTest() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<SelectionActivity> scenario = ActivityScenario.launch(SelectionActivity.class);
 
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
@@ -42,7 +39,7 @@ public class SelectExhibitTest {
 
     @Test
     public void addSelectExhibitMultipleTest() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<SelectionActivity> scenario = ActivityScenario.launch(SelectionActivity.class);
 
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);

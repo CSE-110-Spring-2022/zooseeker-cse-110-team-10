@@ -26,8 +26,8 @@ public class PlanPathTest {
 
     @Test
     public void planButtonInvisible() {
-        ActivityScenario<MainActivity> scenario
-                = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(SelectionActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -39,8 +39,8 @@ public class PlanPathTest {
 
     @Test
     public void planButtonVisible() {
-        ActivityScenario<MainActivity> scenario
-                = ActivityScenario.launch(MainActivity.class);
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(SelectionActivity.class);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.moveToState(Lifecycle.State.RESUMED);

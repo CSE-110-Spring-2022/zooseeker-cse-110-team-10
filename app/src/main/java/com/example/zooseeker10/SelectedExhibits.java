@@ -2,7 +2,6 @@ package com.example.zooseeker10;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class SelectedExhibits {
         if (!selectedExhibitIds.contains(exhibitId)) {
             selectedExhibitIds.add(0, exhibitId);
             Log.d("MainActivity", exhibitId);
-            ((MainActivity) context).update();
+            ((SelectionActivity) context).update();
         }
     }
 
@@ -45,6 +44,6 @@ public class SelectedExhibits {
     public void clear() {
         this.selectedExhibitIds = new ArrayList<>();
         Log.d("MainActivity", "CLEARED");
-        ((MainActivity) context).update();
+        ((SelectionActivity) context).update();
     }
 }

@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.List;
+
+public class SelectionActivity extends AppCompatActivity {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
     private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
@@ -44,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
 
         setUpData();
 
-        // Garbage way of passing the activity. Refactor later.
-        Globals.State.activity = this;
+        Intent intent = getIntent();
+        List<String> selectedExhibitIDs = intent.getStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS);
+        for (String exhibit : selectedExhibitIDs) {
+            selectedExhibits.addExhibit(exhibit);
+        }
 
-        StateManager.loadLastActiveActivity(this);
         update();
     }
 
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        StateManager.storeMainState(selectedExhibits);
+        StateManager.storeSelectionState(selectedExhibits);
     }
 
     private void setUpData() {

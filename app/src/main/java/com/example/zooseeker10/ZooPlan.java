@@ -225,4 +225,18 @@ public class ZooPlan implements Serializable {
         replanSegment.clear();
         replanSegment.addAll(newPlan.plan);
     }
+
+    public ArrayList<String> getExhibitIDs() {
+        ArrayList<String> exhibitIDs = new ArrayList<>();
+
+        Iterator<GraphPath<String, IdentifiedWeightedEdge>> planIterator = plan.iterator();
+        // Getting that first exhibit outta my site
+        planIterator.next();
+        while (planIterator.hasNext()) {
+            GraphPath<String, IdentifiedWeightedEdge> subpath = planIterator.next();
+            exhibitIDs.add(subpath.getStartVertex());
+        }
+
+        return exhibitIDs;
+    }
 }

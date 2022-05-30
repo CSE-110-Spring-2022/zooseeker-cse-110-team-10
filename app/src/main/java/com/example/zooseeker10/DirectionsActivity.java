@@ -108,6 +108,13 @@ public class DirectionsActivity extends AppCompatActivity {
         StateManager.storeDirectionsState(plan, walker.getCurrentExhibitIndex());
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, PlanActivity.class);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
+        startActivity(intent);
+    }
+
     public void refreshDirections() {
         previousButton.setVisibility((walker.hasPrevious()) ? View.VISIBLE : View.INVISIBLE);
         nextButton.setVisibility((walker.hasNext()) ? View.VISIBLE : View.INVISIBLE);

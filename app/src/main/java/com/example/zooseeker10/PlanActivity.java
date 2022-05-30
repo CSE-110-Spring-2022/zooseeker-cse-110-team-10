@@ -69,6 +69,13 @@ public class PlanActivity extends AppCompatActivity {
         StateManager.storePlanState(plan);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, SelectionActivity.class);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, plan.getExhibitIDs());
+        startActivity(intent);
+    }
+
     public void onDirectionsBtnClicked(View view) {
         Intent intent = new Intent(this, DirectionsActivity.class);
         Log.d("PlanActivity", "TODO");
@@ -77,9 +84,9 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public void onRestartPlanButtonClicked(View view) {
-        StateManager.storeMainState(new SelectedExhibits(Globals.State.activity));
+        StateManager.storeSelectionState(new SelectedExhibits(Globals.State.activity));
         adapter.clear(); // TODO: Clear the plan and then update the adapter.
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, SelectionActivity.class);
         startActivity(intent);
     }
 }

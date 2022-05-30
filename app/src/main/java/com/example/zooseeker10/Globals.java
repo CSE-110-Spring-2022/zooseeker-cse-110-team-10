@@ -26,7 +26,7 @@ public class Globals {
     }
 
     public static class State {
-        public static MainActivity activity; // TODO: Kinda cringe.
+        public static TrampolineActivity activity; // TODO: Kinda cringe.
         public static final String DIRECTORY_PATH = "state";
         public static final String ACTIVE_STATE_FILENAME = "active_state";
         public static final String MAIN_FILENAME = "main_activity_state";

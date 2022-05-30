@@ -111,7 +111,7 @@ public class StateManager {
      *
      * @param activity the calling MainActivity
      */
-    public static void loadLastActiveActivity(MainActivity activity) {
+    public static Intent loadIntentFromFile(TrampolineActivity activity) {
         // Sets state in disk and finishes if clean start
         if (!stateFile.exists()) {
             if (!directory.exists()) {
@@ -124,10 +124,12 @@ public class StateManager {
                 e.printStackTrace();
             }
 
-            storeMainState(activity.selectedExhibits);
-            return;
+            Intent defaultIntent = new Intent(activity, SelectionActivity.class);
+            defaultIntent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
+            return defaultIntent;
         }
 
+        Intent intent;
         // Switches to correct activity and loads relevant files based on last saved state
         ActiveState activeState = (ActiveState) FileManager.loadMapFromFile(stateFile).get(Globals.MapKeys.STATE);
         switch (activeState) {
@@ -140,12 +142,9 @@ public class StateManager {
                 Log.d("StateManager", "Loaded from MainActivity file: "
                         + Arrays.toString(selectedExhibitIDs.toArray()));
 
-                SelectedExhibits selectedExhibits = new SelectedExhibits(Globals.State.activity);
-                for (String exhibit : selectedExhibitIDs) {
-                    selectedExhibits.addExhibit(exhibit);
-                }
-
-                activity.selectedExhibits = selectedExhibits; // TODO: Bruh this is scuffed. Maybe intent to self with extra (ensure completed oncreate in mainactivity AND android:launchMode="singleTop")
+                intent = new Intent(activity, SelectionActivity.class);
+                intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS,
+                                               (ArrayList<String>) selectedExhibitIDs);
                 break;
             case Plan:
                 if (!planFile.exists()) {
@@ -154,9 +153,8 @@ public class StateManager {
 
                 ZooPlan pathZooPlan = (ZooPlan) FileManager.loadMapFromFile(planFile).get(Globals.MapKeys.ZOOPLAN);
 
-                Intent pIntent = new Intent(activity, PlanActivity.class);
-                pIntent.putExtra(Globals.MapKeys.ZOOPLAN, pathZooPlan);
-                activity.startActivity(pIntent);
+                intent = new Intent(activity, PlanActivity.class);
+                intent.putExtra(Globals.MapKeys.ZOOPLAN, pathZooPlan);
                 break;
             case Directions:
                 if (!directionsFile.exists()) {
@@ -167,18 +165,20 @@ public class StateManager {
                 ZooPlan directionsZooPlan = (ZooPlan) directionsMap.get(Globals.MapKeys.ZOOPLAN);
                 int walkerIndex = (Integer) directionsMap.get(Globals.MapKeys.WALKER_INDEX);
 
-                Intent dIntent = new Intent(activity, DirectionsActivity.class);
-                dIntent.putExtra(Globals.MapKeys.ZOOPLAN, directionsZooPlan);
-                dIntent.putExtra(Globals.MapKeys.WALKER_INDEX, walkerIndex);
-                activity.startActivity(dIntent);
+                intent = new Intent(activity, DirectionsActivity.class);
+                intent.putExtra(Globals.MapKeys.ZOOPLAN, directionsZooPlan);
+                intent.putExtra(Globals.MapKeys.WALKER_INDEX, walkerIndex);
+                activity.startActivity(intent);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + activeState);
         }
+
+        return intent;
     }
 
     /* store<xActivity>State() should be used in the onStop() methods of <xActivity> */
-    public static void storeMainState(SelectedExhibits exhibits) {
+    public static void storeSelectionState(SelectedExhibits exhibits) {
         FileManager.storeMapToFile(stateFile,
                                    Map.of(Globals.MapKeys.STATE, ActiveState.Main));
         FileManager.storeMapToFile(mainFile,
@@ -204,7 +204,7 @@ public class StateManager {
     }
 
     /* Helper methods to get file maps */
-    private static Map<String, Object> loadMainFile() {
+    private static Map<String, Object> loadSelectionFile() {
         return FileManager.loadMapFromFile(mainFile);
     }
 
