@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ public class DirectionsActivity extends AppCompatActivity {
     public static boolean callReplan;
     Button previousButton;
     Button nextButton;
+    Button finishButton;
     TextView directionsTitle;
 
     ZooPlan plan;
@@ -53,6 +55,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
+        finishButton = findViewById(R.id.directions_finish_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -99,6 +102,14 @@ public class DirectionsActivity extends AppCompatActivity {
                     refreshDirections();
                 }
         );
+
+        finishButton.setOnClickListener(
+                view -> {
+                    Intent finishIntent = new Intent(this, SelectionActivity.class);
+                    finishIntent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<String>());
+                    startActivity(finishIntent);
+                }
+        );
     }
 
     @Override
@@ -110,14 +121,20 @@ public class DirectionsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, PlanActivity.class);
-        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
-        startActivity(intent);
+        if (Globals.Debug.USE_BACK) {
+            Intent intent = new Intent(this, PlanActivity.class);
+            intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
+            startActivity(intent);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     public void refreshDirections() {
         previousButton.setVisibility((walker.hasPrevious()) ? View.VISIBLE : View.INVISIBLE);
         nextButton.setVisibility((walker.hasNext()) ? View.VISIBLE : View.INVISIBLE);
+        finishButton.setVisibility((!walker.hasNext()) ? View.VISIBLE : View.INVISIBLE);
 
         List<DirectionsItem> displayedDirections = walker.explainPath(this);
         dLAdapter.setDirectionsItems(displayedDirections);

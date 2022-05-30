@@ -3,6 +3,10 @@ package com.example.zooseeker10;
 import android.content.Context;
 
 public class Globals {
+    public static class Debug {
+        public static final boolean USE_BACK = false;
+        public static final int SPLASH_DELAY = 0;
+    }
     public static class ZooData {
         public static final String ZOO_GRAPH_PATH = "zoo_graph.json";
         public static final String NODE_INFO_PATH = "exhibit_info.json";

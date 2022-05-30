@@ -8,10 +8,10 @@ import android.os.Handler;
 
 /**
  * Source: codecap.org/create-a-splash-screen-welcom-screen-in-android-studio
+ *
+ * This class is used to switch to the activity stored on disk
  */
 public class TrampolineActivity extends AppCompatActivity {
-    private static int SPLASH_OUT_TIME = 1250;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +26,6 @@ public class TrampolineActivity extends AppCompatActivity {
                 startActivity(homeIntent);
                 finish();
             }
-        }, SPLASH_OUT_TIME);
+        }, Globals.Debug.SPLASH_DELAY);
     }
 }

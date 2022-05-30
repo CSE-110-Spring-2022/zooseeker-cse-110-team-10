@@ -62,6 +62,11 @@ public class SelectionActivity extends AppCompatActivity {
         StateManager.storeSelectionState(selectedExhibits);
     }
 
+    @Override
+    public void onBackPressed() {
+        // No
+    }
+
     private void setUpData() {
         ZooData.getVertexInfo(this);
         Intent intent = new Intent(this, SearchResultsActivity.class);
