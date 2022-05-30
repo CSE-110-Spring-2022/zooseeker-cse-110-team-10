@@ -34,7 +34,6 @@ public class DirectionsNavTest {
     @Before
     public void setup() {
         Context context = ApplicationProvider.getApplicationContext();
-        Globals.ZooDataTest.setLegacy(context);
 
         graph = ZooData.getZooGraph(context);
     }
@@ -42,13 +41,9 @@ public class DirectionsNavTest {
 
     @Test
     public void testDirectionsNav() {
-        String paths = "[" +
-            "[\"entrance_exit_gate\",\"edge-0\",\"entrance_plaza\",\"edge-4\",\"arctic_foxes\"]," +
-            "[\"arctic_foxes\",\"edge-4\",\"entrance_plaza\",\"edge-5\",\"gators\",\"edge-6\",\"lions\"]" +
-        "]";
         ZooPlan plan = new ZooPlan(Arrays.asList(
-                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "entrance_plaza", "arctic_foxes"), 310.0),
-                new GraphWalk<>(graph, Arrays.asList("arctic_foxes", "entrance_plaza", "gators", "lions"), 600.0)
+                new GraphWalk<>(graph, Arrays.asList("entrance_exit_gate", "intxn_front_treetops", "intxn_front_monkey", "flamingo"), 5300.0),
+                new GraphWalk<>(graph, Arrays.asList("flamingo", "capuchin"), 3100.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
         intent.putExtra("paths", plan);
@@ -66,35 +61,31 @@ public class DirectionsNavTest {
             Button nb = activity.findViewById(R.id.directions_next_button);
             Button pb = activity.findViewById(R.id.directions_previous_button);
 
-            assertEquals("Directions from Entrance and Exit Gate to Arctic Foxes", t.getText());
-            assertEquals(2, a.getItemCount());
+            assertEquals("Directions from Entrance and Exit Gate to Flamingos", t.getText());
+            assertEquals(3, a.getItemCount());
             assertEquals("Entrance and Exit Gate", a.getItemAt(0).from);
-            assertEquals("Entrance Way", a.getItemAt(0).street);
-            assertEquals("Entrance Plaza", a.getItemAt(0).to);
-            assertEquals(10.0, a.getItemAt(0).dist, DOUBLE_EPSILON);
-            assertEquals("Entrance Plaza", a.getItemAt(1).from);
-            assertEquals("Arctic Avenue", a.getItemAt(1).street);
-            assertEquals("Arctic Foxes", a.getItemAt(1).to);
-            assertEquals(300.0, a.getItemAt(1).dist, DOUBLE_EPSILON);
+            assertEquals("Gate Path", a.getItemAt(0).street);
+            assertEquals("Front Street / Treetops Way", a.getItemAt(0).to);
+            assertEquals(1100.0, a.getItemAt(0).dist, DOUBLE_EPSILON);
+            assertEquals("Front Street / Treetops Way", a.getItemAt(1).from);
+            assertEquals("Front Street", a.getItemAt(1).street);
+            assertEquals("Front Street / Monkey Trail", a.getItemAt(1).to);
+            assertEquals(2700.0, a.getItemAt(1).dist, DOUBLE_EPSILON);
+            assertEquals("Front Street / Monkey Trail", a.getItemAt(2).from);
+            assertEquals("Monkey Trail", a.getItemAt(2).street);
+            assertEquals("Flamingos", a.getItemAt(2).to);
+            assertEquals(1500.0, a.getItemAt(2).dist, DOUBLE_EPSILON);
             assertEquals(View.INVISIBLE, pb.getVisibility());
             assertEquals(View.VISIBLE, nb.getVisibility());
 
             nb.performClick();
 
-            assertEquals("Directions from Arctic Foxes to Lions", t.getText());
-            assertEquals(3, rv.getAdapter().getItemCount());
-            assertEquals("Arctic Foxes", a.getItemAt(0).from);
-            assertEquals("Arctic Avenue", a.getItemAt(0).street);
-            assertEquals("Entrance Plaza", a.getItemAt(0).to);
-            assertEquals(300.0, a.getItemAt(0).dist, DOUBLE_EPSILON);
-            assertEquals("Entrance Plaza", a.getItemAt(1).from);
-            assertEquals("Reptile Road", a.getItemAt(1).street);
-            assertEquals("Alligators", a.getItemAt(1).to);
-            assertEquals(100.0, a.getItemAt(1).dist, DOUBLE_EPSILON);
-            assertEquals("Alligators", a.getItemAt(2).from);
-            assertEquals("Sharp Teeth Shortcut", a.getItemAt(2).street);
-            assertEquals("Lions", a.getItemAt(2).to);
-            assertEquals(200.0, a.getItemAt(2).dist, DOUBLE_EPSILON);
+            assertEquals("Directions from Flamingos to Capuchin Monkeys", t.getText());
+            assertEquals(1, rv.getAdapter().getItemCount());
+            assertEquals("Flamingos", a.getItemAt(0).from);
+            assertEquals("Monkey Trail", a.getItemAt(0).street);
+            assertEquals("Capuchin Monkeys", a.getItemAt(0).to);
+            assertEquals(3100.0, a.getItemAt(0).dist, DOUBLE_EPSILON);
             assertEquals(View.VISIBLE, pb.getVisibility());
             assertEquals(View.INVISIBLE, nb.getVisibility());
         });

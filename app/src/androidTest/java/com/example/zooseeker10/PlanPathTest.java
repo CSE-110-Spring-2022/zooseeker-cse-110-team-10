@@ -16,14 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PlanPathTest {
-    @Before
-    public void setup() {
-        Context context = ApplicationProvider.getApplicationContext();
-        Globals.ZooDataTest.setLegacy(context);
-    }
-
     @Test
     public void planButtonInvisible() {
         ActivityScenario<MainActivity> scenario
@@ -46,7 +41,7 @@ public class PlanPathTest {
         scenario.moveToState(Lifecycle.State.RESUMED);
 
         scenario.onActivity(activity -> {
-            activity.selectedExhibits.addExhibit("gators");
+            activity.selectedExhibits.addExhibit("flamingo");
             assertEquals(View.VISIBLE, activity.findViewById(R.id.plan_btn).getVisibility());
         });
     }
@@ -54,9 +49,7 @@ public class PlanPathTest {
     @Test
     public void testPlan() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PlanActivity.class);
-        ArrayList<String> exhibits = new ArrayList<>();
-        exhibits.add("arctic_foxes");
-        exhibits.add("gorillas");
+        ArrayList<String> exhibits = new ArrayList(Arrays.asList("flamingo", "capuchin", "koi"));
         intent.putStringArrayListExtra("exhibits", exhibits);
         ActivityScenario<PlanActivity> scenario
                 = ActivityScenario.launch(intent);
@@ -67,16 +60,19 @@ public class PlanPathTest {
         scenario.onActivity(activity -> {
             RecyclerView rv = activity.findViewById(R.id.plan_dist_list);
             RecyclerView.Adapter ad = rv.getAdapter();
-            assertEquals(3, ad.getItemCount());
+            assertEquals(4, ad.getItemCount());
             RecyclerView.ViewHolder vh = rv.findViewHolderForAdapterPosition(0);
-            assertEquals("Gorillas", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
-            assertEquals("210 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
+            assertEquals("Flamingos", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
+            assertEquals("5300 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
             vh = rv.findViewHolderForAdapterPosition(1);
-            assertEquals("Arctic Foxes", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
-            assertEquals("710 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
+            assertEquals("Capuchin Monkeys", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
+            assertEquals("8400 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
             vh = rv.findViewHolderForAdapterPosition(2);
+            assertEquals("Koi Fish", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
+            assertEquals("21100 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
+            vh = rv.findViewHolderForAdapterPosition(3);
             assertEquals("Entrance and Exit Gate", ((TextView)vh.itemView.findViewById(R.id.exhibit_name)).getText());
-            assertEquals("1020 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
+            assertEquals("27600 ft", ((TextView)vh.itemView.findViewById(R.id.exhibit_distance)).getText());
         });
     }
 }

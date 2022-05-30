@@ -17,6 +17,7 @@ public class PathFinder {
     Graph<String, IdentifiedWeightedEdge> graph;
     String entranceID;
     String exitID;
+    boolean replanAsked;
 
     /**
      * Constructs a PathFinder object
@@ -75,13 +76,24 @@ public class PathFinder {
     }
 
     /**
+     * Finds the shortest path between two exhibits
+     *
+     * @param from the exhibit to start from
+     * @param to the exhibit to end at
+     * @return shortest path
+     */
+    public GraphPath<String, IdentifiedWeightedEdge> getShortest(@NonNull String from, @NonNull String to) {
+        return gD.getPath(from, to);
+    }
+
+    /**
      * Finds the shortest path from the start vertex to some vertex in the set
      *
      * @param startVertex the vertex to search paths from
      * @param unvisitedExhibits the available destination vertices
      * @return path from specified start vertex to nearest available destination vertex
      */
-    private GraphPath<String, IdentifiedWeightedEdge> getShortestPathInSet(
+    public GraphPath<String, IdentifiedWeightedEdge> getShortestPathInSet(
             String startVertex,
             Set<String> unvisitedExhibits) {
         ShortestPathAlgorithm.SingleSourcePaths<String, IdentifiedWeightedEdge> shortestPaths = gD.getPaths(startVertex);
