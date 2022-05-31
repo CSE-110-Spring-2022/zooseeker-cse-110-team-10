@@ -36,6 +36,14 @@ public class Globals {
         public static final String MAIN_FILENAME = "main_activity_state";
         public static final String PLAN_FILENAME = "plan_activity_state";
         public static final String DIRECTIONS_FILENAME = "directions_activity_state";
+
+
+        public enum ActiveState {
+            Trampoline,
+            Main,
+            Plan,
+            Directions;
+        }
     }
 
     public static class MapKeys {

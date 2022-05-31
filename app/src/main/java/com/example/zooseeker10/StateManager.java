@@ -20,12 +20,6 @@ import java.util.Map;
  * Manages persistence of application state
  */
 public class StateManager {
-    private enum ActiveState {
-        Main,
-        Plan,
-        Directions;
-    }
-
     private static final File directory;
     private static final File stateFile;
     private static final File mainFile;
@@ -43,77 +37,10 @@ public class StateManager {
         directionsFile = new File(directory, Globals.State.DIRECTIONS_FILENAME);
     }
 
-    /**
-     * Used to load and store files. Honestly, doesn't even need to be in this subclass but I am
-     * clinically insane and have committed manslaughter in multiple countries.
-     */
-    private static class FileManager {
-        /**
-         * Writes the given map to the file
-         *
-         * @param file file to write to
-         * @param mapToWrite map to write
-         */
-        private static void storeMapToFile(File file, Map<String, Object> mapToWrite) {
-            try {
-                // Saving of object in a file
-                FileOutputStream fileOut = new FileOutputStream(file);
-                ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+    public static boolean isCleanStart() {
+        boolean isCleanStart = !stateFile.exists();
 
-                // Method for serialization of object
-                objectOut.writeObject(mapToWrite);
-
-                objectOut.close();
-                fileOut.close();
-
-                Log.d("StateManager", String.format("Map successfully stored at %s",
-                        file.getAbsolutePath()));
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * Loads map from file
-         *
-         * @param file file to load map from
-         * @return We may never know
-         */
-        private static Map<String, Object> loadMapFromFile(File file) {
-            try {
-                FileInputStream fileIn = new FileInputStream(file);
-                ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-
-                Map<String, Object> loadedList = (Map<String, Object>) objectIn.readObject();
-
-                objectIn.close();
-                fileIn.close();
-
-                Log.d("StateManager", String.format("Map successfully loaded from %s",
-                        file.getAbsolutePath()));
-
-                return loadedList;
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            return null; // TODO: idk. maybe just throw unchecked exceptions in catches.
-        }
-    }
-
-    /**
-     * Called by MainActivity's onCreate to load state data and pull up the last-active Activity
-     *
-     * @param activity the calling MainActivity
-     */
-    public static Intent loadIntentFromFile(TrampolineActivity activity) {
-        // Sets state in disk and finishes if clean start
-        if (!stateFile.exists()) {
+        if (isCleanStart) {
             if (!directory.exists()) {
                 directory.mkdir();
             }
@@ -123,65 +50,16 @@ public class StateManager {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            Intent defaultIntent = new Intent(activity, SelectionActivity.class);
-            defaultIntent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
-            return defaultIntent;
         }
 
-        Intent intent;
-        // Switches to correct activity and loads relevant files based on last saved state
-        ActiveState activeState = (ActiveState) FileManager.loadMapFromFile(stateFile).get(Globals.MapKeys.STATE);
-        switch (activeState) {
-            case Main:
-                if (!mainFile.exists()) {
-                    throw new IllegalStateException("MainFile not found");
-                }
-
-                List<String> selectedExhibitIDs = (ArrayList<String>) FileManager.loadMapFromFile(mainFile).get(Globals.MapKeys.SELECTED_EXHIBIT_IDS);
-                Log.d("StateManager", "Loaded from MainActivity file: "
-                        + Arrays.toString(selectedExhibitIDs.toArray()));
-
-                intent = new Intent(activity, SelectionActivity.class);
-                intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS,
-                                               (ArrayList<String>) selectedExhibitIDs);
-                break;
-            case Plan:
-                if (!planFile.exists()) {
-                    throw new IllegalStateException("PlanFile not found");
-                }
-
-                ZooPlan pathZooPlan = (ZooPlan) FileManager.loadMapFromFile(planFile).get(Globals.MapKeys.ZOOPLAN);
-
-                intent = new Intent(activity, PlanActivity.class);
-                intent.putExtra(Globals.MapKeys.ZOOPLAN, pathZooPlan);
-                break;
-            case Directions:
-                if (!directionsFile.exists()) {
-                    throw new IllegalStateException("DirectionsFile not found"); // TODO: Probably don't need to throw exception. Could just restart in MainActivity.
-                }
-
-                Map<String, Object> directionsMap = FileManager.loadMapFromFile(directionsFile);
-                ZooPlan directionsZooPlan = (ZooPlan) directionsMap.get(Globals.MapKeys.ZOOPLAN);
-                int walkerIndex = (Integer) directionsMap.get(Globals.MapKeys.WALKER_INDEX);
-
-                intent = new Intent(activity, DirectionsActivity.class);
-                intent.putExtra(Globals.MapKeys.ZOOPLAN, directionsZooPlan);
-                intent.putExtra(Globals.MapKeys.WALKER_INDEX, walkerIndex);
-                activity.startActivity(intent);
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + activeState);
-        }
-
-        return intent;
+        return isCleanStart;
     }
 
     /* store<xActivity>State() should be used in the onStop() methods of <xActivity> */
     public static void storeSelectionState(SelectedExhibits exhibits) {
-        FileManager.storeMapToFile(stateFile,
-                                   Map.of(Globals.MapKeys.STATE, ActiveState.Main));
-        FileManager.storeMapToFile(mainFile,
+        storeMapToFile(stateFile,
+                                   Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Main));
+        storeMapToFile(mainFile,
                                    Map.of(Globals.MapKeys.SELECTED_EXHIBIT_IDS, exhibits.getExhibitIds()));
 
         Log.d("StateManager", "Stored to MainActivity file: "
@@ -189,30 +67,111 @@ public class StateManager {
     }
 
     public static void storePlanState(ZooPlan plan) {
-        FileManager.storeMapToFile(stateFile,
-                                   Map.of(Globals.MapKeys.STATE, ActiveState.Plan));
-        FileManager.storeMapToFile(planFile,
+        storeMapToFile(stateFile,
+                                   Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Plan));
+        storeMapToFile(planFile,
                                    Map.of(Globals.MapKeys.ZOOPLAN, plan));
     }
 
     public static void storeDirectionsState(ZooPlan plan, int walkerIndex) {
-        FileManager.storeMapToFile(stateFile,
-                                   Map.of(Globals.MapKeys.STATE, ActiveState.Directions));
-        FileManager.storeMapToFile(directionsFile,
+        storeMapToFile(stateFile,
+                                   Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Directions));
+        storeMapToFile(directionsFile,
                                    Map.of(Globals.MapKeys.ZOOPLAN, plan,
                                           Globals.MapKeys.WALKER_INDEX, walkerIndex));
     }
 
-    /* Helper methods to get file maps */
-    private static Map<String, Object> loadSelectionFile() {
-        return FileManager.loadMapFromFile(mainFile);
+    /**
+     * Loads the corresponding map from disk
+     *
+     * @param state the activity map to load
+     * @return a map of the activity's respective state variables
+     */
+    public static Map<String, Object> getActivityMap(Globals.State.ActiveState state) {
+        File file = getFile(state);
+
+        if (!file.exists()) {
+            throw new IllegalStateException(String.format("File at path %s not found", file.getAbsolutePath()));
+        }
+
+        return loadMapFromFile(file);
     }
 
-    private static Map<String, Object> loadPlanFile() {
-        return FileManager.loadMapFromFile(planFile);
+    /**
+     * Gets the file corresponding to the passed in state
+     *
+     * @param state current activity
+     * @return file corresponding to the passed in state
+     */
+    private static File getFile(Globals.State.ActiveState state) {
+        switch (state) {
+            case Trampoline:
+                return stateFile;
+            case Main:
+                return mainFile;
+            case Plan:
+                return planFile;
+            case Directions:
+                return directionsFile;
+            default:
+                throw new IllegalStateException("Unexpected value: " + state);
+        }
     }
 
-    private static Map<String, Object> loadDirectionsFile() {
-        return FileManager.loadMapFromFile(directionsFile);
+    /**
+     * Writes the given map to the file
+     *
+     * @param file file to write to
+     * @param mapToWrite map to write
+     */
+    private static void storeMapToFile(File file, Map<String, Object> mapToWrite) {
+        try {
+            // Saving of object in a file
+            FileOutputStream fileOut = new FileOutputStream(file);
+            ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+
+            // Method for serialization of object
+            objectOut.writeObject(mapToWrite);
+
+            objectOut.close();
+            fileOut.close();
+
+            Log.d("StateManager", String.format("Map successfully stored at %s",
+                    file.getAbsolutePath()));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Loads map from file
+     *
+     * @param file file to load map from
+     * @return We may never know
+     */
+    private static Map<String, Object> loadMapFromFile(File file) {
+        try {
+            FileInputStream fileIn = new FileInputStream(file);
+            ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+
+            Map<String, Object> loadedList = (Map<String, Object>) objectIn.readObject();
+
+            objectIn.close();
+            fileIn.close();
+
+            Log.d("StateManager", String.format("Map successfully loaded from %s",
+                    file.getAbsolutePath()));
+
+            return loadedList;
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null; // TODO: idk. maybe just throw unchecked exceptions in catches.
     }
 }
