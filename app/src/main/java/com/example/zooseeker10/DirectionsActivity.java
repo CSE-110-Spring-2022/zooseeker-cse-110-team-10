@@ -28,6 +28,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
     Button previousButton;
     Button nextButton;
+    Button skipButton;
     TextView directionsTitle;
 
     ZooPlan plan;
@@ -37,6 +38,7 @@ public class DirectionsActivity extends AppCompatActivity {
     PathFinder pf;
     String lastVertexLocation;
     ReplanPrompt replanPrompt;
+    ReplanMessageDisplay replanMessageDisplay;
     UserTracker userTracker;
 
     @SuppressLint("MissingPermission")
@@ -53,6 +55,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
+        skipButton = findViewById(R.id.skip_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -99,6 +102,7 @@ public class DirectionsActivity extends AppCompatActivity {
         }
 
         replanPrompt = new ReplanPrompt(this);
+        replanMessageDisplay = new ReplanMessageDisplay(this);
 
         previousButton.setOnClickListener(view -> {
             replanPrompt.enablePrompt();
@@ -123,6 +127,7 @@ public class DirectionsActivity extends AppCompatActivity {
         // set visibility of previous/next buttons by hasPrevious/hasNext
         previousButton.setVisibility(walker.hasPrevious() ? View.VISIBLE : View.INVISIBLE);
         nextButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
+        skipButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
 
         // update visible directions
         List<DirectionsItem> displayedDirections = walker.explainPath(this);
@@ -139,5 +144,13 @@ public class DirectionsActivity extends AppCompatActivity {
         ZooPlan newPlan = pf.findPath(replannableExhibits, lastVertexLocation);
         plan.replan(walker, newPlan);
         reloadDirectionsPage();
+    }
+
+    public void onSkipButtonClicked(View view) {
+        String skippedExhibitID = walker.getNextExhibitID();
+        Log.d("DirectionsActivity", String.format("Skipped exhibit: %s", skippedExhibitID));
+        plan.remove(walker.getCurrentExhibitIndex());
+        replanMessageDisplay.showPrompt();
+        onReplanRequested();
     }
 }
