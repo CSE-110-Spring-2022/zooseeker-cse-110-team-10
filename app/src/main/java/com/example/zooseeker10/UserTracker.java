@@ -1,5 +1,7 @@
 package com.example.zooseeker10;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.jgrapht.GraphPath;
@@ -81,7 +83,9 @@ public class UserTracker {
      * @return whether a user is off-track
      */
     public boolean isOffTrack() {
-        return !walker.getCurrentPath().getVertexList().contains(getClosestVertex());
+        String closestVertexId = this.getClosestVertex().id;
+        boolean onPath = walker.getCurrentPath().getVertexList().contains(closestVertexId);
+        return !onPath;
     }
 
     /**

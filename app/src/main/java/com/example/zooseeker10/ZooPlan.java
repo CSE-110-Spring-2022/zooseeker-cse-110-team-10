@@ -213,7 +213,7 @@ public class ZooPlan implements Serializable {
      */
     public void replan(ZooWalker walker, ZooPlan newPlan) {
         int i = walker.currentIndex;
-        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, i + newPlan.size());
+        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, this.plan.size());
         replanSegment.clear();
         replanSegment.addAll(newPlan.plan);
     }
