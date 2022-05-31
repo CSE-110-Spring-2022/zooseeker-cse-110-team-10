@@ -103,14 +103,8 @@ public class ZooPlan implements Serializable {
             return plan.get(currentIndex).getStartVertex();
         }
 
-        public List<String> getUnvisitedExhibits() {
-            List<String> unvisited = new ArrayList<>();
-
-            for (int i = currentIndex; i < plan.size(); i++) {
-                unvisited.add(plan.get(i).getEndVertex());
-            }
-
-            return unvisited;
+        public GraphPath<String, IdentifiedWeightedEdge> getCurrentPath() {
+            return plan.get(currentIndex);
         }
 
         /**
@@ -221,7 +215,7 @@ public class ZooPlan implements Serializable {
      */
     public void replan(ZooWalker walker, ZooPlan newPlan) {
         int i = walker.currentIndex;
-        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, this.plan.size());
+        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, i + newPlan.size());
         replanSegment.clear();
         replanSegment.addAll(newPlan.plan);
     }
@@ -238,5 +232,16 @@ public class ZooPlan implements Serializable {
         }
 
         return exhibitIDs;
+    }
+
+    /**
+     * Overwrites one subpath of the iterator with a new subpath.
+     *
+     * @param walker iterator for the subpath to be overwritten
+     * @param newPath the subpath to be written
+     */
+    public void replan(ZooWalker walker, GraphPath<String, IdentifiedWeightedEdge> newPath) {
+        int i = walker.currentIndex;
+        this.plan.set(i, newPath);
     }
 }

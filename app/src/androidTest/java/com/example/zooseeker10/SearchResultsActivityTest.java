@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class SearchResultsActivityTest {
-
     @Test
     public void testValidNameQuery() {
         String searchQuery = "goril";
@@ -45,7 +44,7 @@ public class SearchResultsActivityTest {
             assertNotNull(vh1);
             assertNull(vh2);
 
-            String expectedId = "gorillas";
+            String expectedId = "gorilla";
             String id = ((SearchResultsAdapter.ViewHolder) vh1).getSearchResult().id;
             assertEquals(expectedId, id);
 
@@ -75,22 +74,26 @@ public class SearchResultsActivityTest {
             RecyclerView.ViewHolder vh3 = recyclerView.findViewHolderForAdapterPosition(2);
             RecyclerView.ViewHolder vh4 = recyclerView.findViewHolderForAdapterPosition(3);
             RecyclerView.ViewHolder vh5 = recyclerView.findViewHolderForAdapterPosition(4);
+            RecyclerView.ViewHolder vh6 = recyclerView.findViewHolderForAdapterPosition(5);
 
             assertNotNull(vh1);
             assertNotNull(vh2);
             assertNotNull(vh3);
             assertNotNull(vh4);
-            assertNull(vh5);
+            assertNotNull(vh5);
+            assertNull(vh6);
 
             String id1 = ((SearchResultsAdapter.ViewHolder) vh1).getSearchResult().id;
             String id2 = ((SearchResultsAdapter.ViewHolder) vh2).getSearchResult().id;
             String id3 = ((SearchResultsAdapter.ViewHolder) vh3).getSearchResult().id;
             String id4 = ((SearchResultsAdapter.ViewHolder) vh4).getSearchResult().id;
+            String id5 = ((SearchResultsAdapter.ViewHolder) vh5).getSearchResult().id;
 
-            assertEquals("arctic_foxes", id1);
-            assertEquals("elephant_odyssey", id2);
-            assertEquals("gorillas", id3);
-            assertEquals("lions", id4);
+            assertEquals("capuchin", id1);
+            assertEquals("gorilla", id2);
+            assertEquals("hippo", id3);
+            assertEquals("orangutan", id4);
+            assertEquals("siamang", id5);
         });
     }
 

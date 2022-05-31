@@ -69,6 +69,8 @@ public class SelectionActivity extends AppCompatActivity {
 
     private void setUpData() {
         ZooData.getVertexInfo(this);
+        ZooData.getEdgeInfo(this);
+        ZooData.getZooGraph(this);
         Intent intent = new Intent(this, SearchResultsActivity.class);
         intent.putExtra("dummy", true);
         startActivity(intent);

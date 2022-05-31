@@ -188,6 +188,10 @@ public class ZooData {
         return edgeInfo;
     }
 
+    public static Map<String, ZooData.EdgeInfo> getEdgeInfo() {
+        return edgeInfo;
+    }
+
     public static Map<String, ZooData.EdgeInfo> loadEdgeInfoJSON(Context context, String path) {
         try {
             InputStream inputStream = context.getAssets().open(path);
@@ -212,6 +216,10 @@ public class ZooData {
         if (zooGraph == null) {
             zooGraph = loadZooGraphJSON(context, Globals.ZooData.ZOO_GRAPH_PATH);
         }
+        return zooGraph;
+    }
+
+    public static Graph<String, IdentifiedWeightedEdge> getZooGraph() {
         return zooGraph;
     }
 

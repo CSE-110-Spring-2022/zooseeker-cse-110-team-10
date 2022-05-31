@@ -1,38 +1,39 @@
 package com.example.zooseeker10;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.util.Log;
-import android.widget.Toast;
 
-public class ReplanPrompt{
-    private Activity activity;
+public class ReplanPrompt {
+    private final AlertDialog.Builder builder;
+    private final DirectionsActivity activity;
+    private boolean suppressPrompt;
 
-    public ReplanPrompt(Activity activity){
+    public ReplanPrompt(DirectionsActivity activity){
         this.activity = activity;
-    }
 
-    public void showPrompt(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setTitle("You are off-track!");
+        this.builder = new AlertDialog.Builder(activity);
+        this.builder.setTitle("You are off-track!");
         builder.setMessage("Do you want to replan?");
         builder.setCancelable(true);
+        builder
+                .setPositiveButton("Replan", (dialogInterface, i) -> {
+                    activity.onReplanRequested();
+                    dialogInterface.cancel();
+                })
+                .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                    dialogInterface.cancel();
+                });
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                DirectionsActivity.callReplan = true;
-                dialogInterface.cancel();
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
+        this.suppressPrompt = false;
+    }
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+    public void showPrompt() {
+        if (!this.suppressPrompt) {
+            builder.create().show();
+            this.suppressPrompt = true;
+        }
+    }
+
+    public void enablePrompt() {
+        this.suppressPrompt = false;
     }
 }
