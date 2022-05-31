@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -110,11 +111,18 @@ public class DirectionsActivity extends AppCompatActivity {
             nextButton.setVisibility(View.VISIBLE);
         }
 
-        List<DirectionsItem> displayedDirections = walker.explainPath(this);
-        dLAdapter.setDirectionsItems(displayedDirections);
         directionsTitle.setText(String.format("Directions to %s",
-                displayedDirections.get(displayedDirections.size() - 1).to
+                vertexInfo.get(walker.getCurrentPath().getEndVertex()).name
         ));
+        if (lastVertexLocation == null || lastVertexLocation.equals(walker.getCurrentPath().getStartVertex())) {
+            dLAdapter.setDirectionsItems(walker.explainPath(this));
+        } else {
+            recalculatePath();
+            dLAdapter.setDirectionsItems(walker.explainPath(this));
+            if (userTracker.needsReplan()) {
+                new ReplanPrompt(this).showPrompt();
+            }
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -131,18 +139,19 @@ public class DirectionsActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates(provider, 0, 0f, locationListener);
     }
 
-    private void handleLocationChanged(@NonNull LatLng currentLocation) {
+    @VisibleForTesting
+    public void handleLocationChanged(@NonNull LatLng currentLocation) {
         Log.d("DirectionsActivity", String.format("Location changed: %s", currentLocation));
 
         userTracker.setUserLocation(currentLocation);
         lastVertexLocation = userTracker.getClosestVertex().id;
         if (userTracker.isOffTrack()) {
             recalculatePath();
+            dLAdapter.setDirectionsItems(walker.explainPath(this));
+            if (userTracker.needsReplan()) {
+                new ReplanPrompt(this).showPrompt();
+            }
         }
-        if (userTracker.needsReplan()) {
-            new ReplanPrompt(this).showPrompt();
-        }
-        dLAdapter.setDirectionsItems(walker.explainPath(this));
     }
 
     @SuppressLint("SetTextI18n")
