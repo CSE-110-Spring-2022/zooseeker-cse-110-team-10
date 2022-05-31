@@ -150,7 +150,11 @@ public class DirectionsActivity extends AppCompatActivity {
         String skippedExhibitID = walker.getNextExhibitID();
         Log.d("DirectionsActivity", String.format("Skipped exhibit: %s", skippedExhibitID));
         plan.remove(walker.getCurrentExhibitIndex());
+        List<String> replannableExhibits = plan.getReplannable(walker);
+        lastVertexLocation = userTracker.getClosestVertex().id;
+        ZooPlan newPlan = pf.findPath(replannableExhibits, lastVertexLocation);
+        plan.replan(walker, newPlan);
         replanMessageDisplay.showPrompt();
-        onReplanRequested();
+        reloadDirectionsPage();
     }
 }
