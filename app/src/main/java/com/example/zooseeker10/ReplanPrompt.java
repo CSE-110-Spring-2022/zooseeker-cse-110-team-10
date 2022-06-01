@@ -7,7 +7,7 @@ public class ReplanPrompt {
     private final DirectionsActivity activity;
     private boolean suppressPrompt;
 
-    public ReplanPrompt(DirectionsActivity activity){
+    public ReplanPrompt(DirectionsActivity activity) {
         this.activity = activity;
 
         this.builder = new AlertDialog.Builder(activity);

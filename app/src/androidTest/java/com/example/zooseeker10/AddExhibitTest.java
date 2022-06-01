@@ -43,7 +43,7 @@ public class AddExhibitTest {
             addBtn.performClick();
             Log.d("Search Activity Finish Status: ", "Success");
         });
-        String result=scenario.getResult().getResultData().getStringExtra("exhibitId");
+        String result = scenario.getResult().getResultData().getStringExtra("exhibitId");
         assertEquals(searchQuery, result);
     }
 }

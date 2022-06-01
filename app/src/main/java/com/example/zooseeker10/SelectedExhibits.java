@@ -28,7 +28,7 @@ public class SelectedExhibits {
         }
     }
 
-    public ArrayList<String> getExhibitIds(){
+    public ArrayList<String> getExhibitIds() {
         return this.selectedExhibitIds;
     }
 

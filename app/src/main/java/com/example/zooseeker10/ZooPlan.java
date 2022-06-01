@@ -99,8 +99,19 @@ public class ZooPlan implements Serializable {
             return currentIndex;
         }
 
+        public int getNextExhibitIndex() {
+            return currentIndex+1;
+        }
+
         public String getCurrentExhibitID() {
             return plan.get(currentIndex).getStartVertex();
+        }
+
+        public String getNextExhibitID() {
+            if (hasNext() == true) {
+                return plan.get(currentIndex + 1).getStartVertex();
+            }
+            return null;
         }
 
         public GraphPath<String, IdentifiedWeightedEdge> getCurrentPath() {
@@ -112,27 +123,63 @@ public class ZooPlan implements Serializable {
          * to be used in DirectionsActivity.
          *
          * @param context the current context
+         * @param isBriefDirections
          * @return list of DirectionsItem for the current subpath
          */
-        public List<DirectionsItem> explainPath(Context context) {
+        public List<DirectionsItem> explainPath(Context context, boolean isBriefDirections) {
             Map<String, ZooData.VertexInfo> vertexInfo = ZooData.getVertexInfo(context);
             Map<String, ZooData.EdgeInfo> edgeInfo = ZooData.getEdgeInfo(context);
             Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(context);
             List<DirectionsItem> explains = new ArrayList<>();
             Iterator<String> vs = plan.get(currentIndex).getVertexList().iterator();
             Iterator<IdentifiedWeightedEdge> es = plan.get(currentIndex).getEdgeList().iterator();
-            String lastVertex = vs.next();
-            while (es.hasNext()) {
-                String nextEdge = es.next().getId();
-                String nextVertex = vs.next();
-                DirectionsItem explain = new DirectionsItem(
-                        vertexInfo.get(lastVertex).name,
-                        vertexInfo.get(nextVertex).name,
-                        edgeInfo.get(nextEdge).street,
-                        g.getEdgeWeight(g.getEdge(lastVertex, nextVertex))
-                );
-                explains.add(explain);
-                lastVertex = nextVertex;
+            if (isBriefDirections) {
+                String currentStreet = null;
+                String currentStreetStart = vs.next();
+                String currentStreetEnd = null;
+                double currentStreetLen = 0.0;
+                while (es.hasNext()) {
+                    IdentifiedWeightedEdge nextEdge = es.next();
+                    String nextEdgeID = nextEdge.getId();
+                    String nextVertex = vs.next();
+                    if (currentStreet == null) {
+                        currentStreet = edgeInfo.get(nextEdgeID).street;
+                    } else if (!edgeInfo.get(nextEdgeID).street.equals(currentStreet)) {
+                        explains.add(new DirectionsItem(
+                                vertexInfo.get(currentStreetStart).name,
+                                vertexInfo.get(currentStreetEnd).name,
+                                currentStreet,
+                                currentStreetLen
+                        ));
+                        currentStreetStart = currentStreetEnd;
+                        currentStreet = edgeInfo.get(nextEdgeID).street;
+                        currentStreetLen = 0.0;
+                    }
+                    currentStreetEnd = nextVertex;
+                    currentStreetLen += g.getEdgeWeight(nextEdge);
+                }
+                explains.add(new DirectionsItem(
+                        vertexInfo.get(currentStreetStart).name,
+                        vertexInfo.get(currentStreetEnd).name,
+                        currentStreet,
+                        currentStreetLen
+                ));
+                Log.d("SIZE: ", ""+explains.size());
+            }
+            else{
+                String lastVertex = vs.next();
+                while (es.hasNext()) {
+                    String nextEdge = es.next().getId();
+                    String nextVertex = vs.next();
+                    DirectionsItem explain = new DirectionsItem(
+                            vertexInfo.get(lastVertex).name,
+                            vertexInfo.get(nextVertex).name,
+                            edgeInfo.get(nextEdge).street,
+                            g.getEdgeWeight(g.getEdge(lastVertex, nextVertex))
+                    );
+                    explains.add(explain);
+                    lastVertex = nextVertex;
+                }
             }
             return explains;
         }
@@ -194,6 +241,15 @@ public class ZooPlan implements Serializable {
         return plan.size();
     }
 
+    public void remove(int skippedIndex) {
+        plan.remove(skippedIndex);
+    }
+
+    public GraphPath<String, IdentifiedWeightedEdge> get(int index) {
+        plan.get(index);
+        return plan.get(index);
+    }
+
     /**
      * Gets the exhibits that can be re-planned, i.e. the destination exhibit for the subpath
      * represented by the iterator and all subsequent exhibits
@@ -215,7 +271,7 @@ public class ZooPlan implements Serializable {
      */
     public void replan(ZooWalker walker, ZooPlan newPlan) {
         int i = walker.currentIndex;
-        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, i + newPlan.size());
+        List<GraphPath<String, IdentifiedWeightedEdge>> replanSegment = this.plan.subList(i, this.plan.size());
         replanSegment.clear();
         replanSegment.addAll(newPlan.plan);
     }

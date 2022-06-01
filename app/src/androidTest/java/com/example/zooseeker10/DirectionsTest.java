@@ -51,7 +51,7 @@ public class DirectionsTest {
 
         scenario.onActivity(activity -> {
             TextView t = activity.findViewById(R.id.directions_title);
-            assertEquals("Directions from Entrance and Exit Gate to Flamingos", t.getText());
+            assertEquals("Directions to Flamingos", t.getText());
             RecyclerView rv = activity.findViewById(R.id.directions_list);
             assertEquals(3, rv.getAdapter().getItemCount());
             RecyclerView.ViewHolder vh0 = rv.findViewHolderForAdapterPosition(0);
