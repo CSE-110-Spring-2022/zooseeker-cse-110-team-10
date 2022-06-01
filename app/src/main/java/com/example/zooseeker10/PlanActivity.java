@@ -40,7 +40,6 @@ public class PlanActivity extends AppCompatActivity {
         else {
             throw new IllegalStateException("PlanActivity unknown state");
         }
-        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
 
         List<PlanDistItem> items = plan.summarizePath(this);
         adapter.setPlanDistItems(items);

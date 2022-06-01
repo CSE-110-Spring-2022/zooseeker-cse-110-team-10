@@ -96,7 +96,7 @@ public class SelectionActivity extends AppCompatActivity implements SelectedExhi
 
     public void onPlanButtonClicked(View view) {
         Intent intent = new Intent(this, PlanActivity.class);
-        intent.putStringArrayListExtra("exhibits", selectedExhibits.getExhibitIds());
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, selectedExhibits.getExhibitIds());
         startActivity(intent);
     }
 
