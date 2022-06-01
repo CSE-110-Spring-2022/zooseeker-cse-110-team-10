@@ -12,12 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity {
+public class SelectionActivity extends AppCompatActivity implements SelectedExhibitsObserver {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
     private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
@@ -33,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        selectedExhibits = new SelectedExhibits(this);
+        selectedExhibits = new SelectedExhibits(this, this);
 
         /* Permissions Setup */
         permissionChecker.ensurePermissions();
@@ -48,6 +45,26 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         setUpData();
+
+        Intent intent = getIntent();
+        List<String> selectedExhibitIDs = intent.getStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS);
+        for (String exhibit : selectedExhibitIDs) {
+            selectedExhibits.addExhibit(exhibit);
+        }
+
+        onSelectedExhibitsUpdated();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        StateManager.getSingleton(this).storeSelectionState(selectedExhibits);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // No
     }
 
     private void setUpData() {
@@ -102,13 +119,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void update() {
-            adapter.setSelectedExhibits(this.selectedExhibits.getExhibitIDs());
+    @Override
+    public void onSelectedExhibitsUpdated() {
+            adapter.setSelectedExhibits(this.selectedExhibits.getExhibits());
             if (this.selectedExhibits.getCount() > 0) {
                 planButton.setVisibility(View.VISIBLE);
+            } else {
+                planButton.setVisibility(View.INVISIBLE);
             }
 
             exhibitsCountView.setText("(" + this.selectedExhibits.getCount() + ")");
             Log.d("SelectedExhibitIds", this.selectedExhibits.getExhibitIds().toString());
+    }
+
+    public void onDeleteButtonClicked(View view) {
+        selectedExhibits.clear();
     }
 }

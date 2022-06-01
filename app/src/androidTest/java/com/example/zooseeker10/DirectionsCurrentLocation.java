@@ -44,7 +44,7 @@ public class DirectionsCurrentLocation {
                 new GraphWalk<>(graph, Arrays.asList("parker_aviary", "orangutan", "siamang", "intxn_treetops_orangutan_trail", "intxn_treetops_fern_trail", "intxn_front_treetops", "entrance_exit_gate"), 7400.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);

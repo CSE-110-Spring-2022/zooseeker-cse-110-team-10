@@ -46,7 +46,7 @@ public class DirectionsNavTest {
                 new GraphWalk<>(graph, Arrays.asList("flamingo", "capuchin"), 3100.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);

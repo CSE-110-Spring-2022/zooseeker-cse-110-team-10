@@ -44,7 +44,7 @@ public class SkipExhibitTest {
                 new GraphWalk<>(graph, Arrays.asList("capuchin", "flamingo_to_capuchin", "intxn_front_monkey", "intxn_front_treetops", "entrance_exit_gate"), 8400.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);
@@ -88,7 +88,7 @@ public class SkipExhibitTest {
                 new GraphWalk<>(graph, Arrays.asList("capuchin", "flamingo_to_capuchin", "intxn_front_monkey", "intxn_front_treetops", "entrance_exit_gate"), 8400.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);

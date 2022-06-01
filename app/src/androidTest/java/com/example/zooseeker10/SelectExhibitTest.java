@@ -2,7 +2,7 @@ package com.example.zooseeker10;
 
 import static org.junit.Assert.assertEquals;
 
-import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 
@@ -11,16 +11,20 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.ArrayList;
 
 @RunWith(AndroidJUnit4.class)
 public class SelectExhibitTest {
 
     @Test
     public void addSelectExhibitDuplicateTest() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SelectionActivity.class);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(intent);
 
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
@@ -42,7 +46,10 @@ public class SelectExhibitTest {
 
     @Test
     public void addSelectExhibitMultipleTest() {
-        ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SelectionActivity.class);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(intent);
 
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);

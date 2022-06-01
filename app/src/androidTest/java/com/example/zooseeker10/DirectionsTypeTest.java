@@ -48,7 +48,7 @@ public class DirectionsTypeTest {
             new GraphWalk<>(graph, Arrays.asList("intxn_treetops_orangutan_trail", "intxn_treetops_fern_trail", "intxn_front_treetops", "entrance_exit_gate"), 8700.0)
         ));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), DirectionsActivity.class);
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
         ActivityScenario<DirectionsActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);

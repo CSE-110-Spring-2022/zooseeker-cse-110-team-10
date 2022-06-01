@@ -21,8 +21,10 @@ import java.util.Arrays;
 public class PlanPathTest {
     @Test
     public void planButtonInvisible() {
-        ActivityScenario<MainActivity> scenario
-                = ActivityScenario.launch(MainActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SelectionActivity.class);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -34,8 +36,10 @@ public class PlanPathTest {
 
     @Test
     public void planButtonVisible() {
-        ActivityScenario<MainActivity> scenario
-                = ActivityScenario.launch(MainActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), SelectionActivity.class);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
+        ActivityScenario<SelectionActivity> scenario
+                = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);
         scenario.moveToState(Lifecycle.State.STARTED);
         scenario.moveToState(Lifecycle.State.RESUMED);
@@ -50,7 +54,7 @@ public class PlanPathTest {
     public void testPlan() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PlanActivity.class);
         ArrayList<String> exhibits = new ArrayList(Arrays.asList("flamingo", "capuchin", "koi"));
-        intent.putStringArrayListExtra("exhibits", exhibits);
+        intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, exhibits);
         ActivityScenario<PlanActivity> scenario
                 = ActivityScenario.launch(intent);
         scenario.moveToState(Lifecycle.State.CREATED);

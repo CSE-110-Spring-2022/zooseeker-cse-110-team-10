@@ -35,6 +35,11 @@ public class PlanDistListAdapter extends RecyclerView.Adapter<PlanDistListAdapte
         holder.setPlanDistItem(planDistItems.get(position));
     }
 
+    public void clear(){
+        planDistItems.clear();
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
         return planDistItems.size();

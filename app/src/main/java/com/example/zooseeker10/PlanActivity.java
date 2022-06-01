@@ -16,24 +16,40 @@ import java.util.List;
 import java.util.Map;
 
 public class PlanActivity extends AppCompatActivity {
-
     ZooPlan plan;
+    PlanDistListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan);
 
-        PlanDistListAdapter adapter = new PlanDistListAdapter();
+        adapter = new PlanDistListAdapter();
         RecyclerView recyclerView = findViewById(R.id.plan_dist_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        Intent intent = getIntent();
+        if (intent.hasExtra(Globals.MapKeys.ZOOPLAN)) {
+            plan = (ZooPlan) intent.getSerializableExtra(Globals.MapKeys.ZOOPLAN);
+        }
+        else if (intent.hasExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS)) {
+            ArrayList<String> exhibits = intent.getStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS);
+            plan = generatePlan(exhibits);
+        }
+        else {
+            throw new IllegalStateException("PlanActivity unknown state");
+        }
+        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
+
+        List<PlanDistItem> items = plan.summarizePath(this);
+        adapter.setPlanDistItems(items);
+    }
+
+    private ZooPlan generatePlan(ArrayList<String> exhibits) {
         Graph<String, IdentifiedWeightedEdge> g = ZooData.getZooGraph(this);
         Map<String, ZooData.VertexInfo> vertexInfos = ZooData.getVertexInfo(this);
         PathFinder pf = new PathFinder(g, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
-        Intent intent = getIntent();
-        ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
 
         List<String> vertexIDs = new ArrayList<>();
         for (String exhibit : exhibits) {
@@ -43,16 +59,39 @@ public class PlanActivity extends AppCompatActivity {
                 vertexIDs.add(vertexID);
             }
         }
-        plan = pf.findPath(vertexIDs);
-        List<PlanDistItem> items = plan.summarizePath(this);
-        adapter.setPlanDistItems(items);
+        return pf.findPath(vertexIDs);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        StateManager.getSingleton(this).storePlanState(plan);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Globals.Debug.USE_BACK) {
+            Intent intent = new Intent(this, SelectionActivity.class);
+            intent.putStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, plan.getExhibitIDs());
+            startActivity(intent);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     public void onDirectionsBtnClicked(View view) {
         Intent intent = new Intent(this, DirectionsActivity.class);
         Log.d("PlanActivity", "TODO");
-        intent.putExtra("paths", plan);
+        intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
+        startActivity(intent);
+    }
+
+    public void onRestartPlanButtonClicked(View view) {
+        StateManager.getSingleton().storeSelectionState(new SelectedExhibits(this, () -> {}));
+        Intent intent = new Intent(this, SelectionActivity.class);
+        intent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
         startActivity(intent);
     }
 }

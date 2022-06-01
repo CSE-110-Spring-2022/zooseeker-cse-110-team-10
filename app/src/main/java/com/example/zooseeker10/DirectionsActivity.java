@@ -14,7 +14,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import org.jgrapht.GraphPath;
 
 import java.util.List;
@@ -40,6 +40,7 @@ public class DirectionsActivity extends AppCompatActivity {
     private Button nextButton;
     private TextView directionsTitle;
     private Button skipButton;
+    private Button finishButton;
 
     @VisibleForTesting
     public ZooPlan plan;
@@ -52,6 +53,11 @@ public class DirectionsActivity extends AppCompatActivity {
     private ReplanPrompt replanPrompt;
     private ReplanMessageDisplay replanMessageDisplay;
 
+    /**
+     * Source: https://www.mysamplecode.com/2012/06/android-internal-external-storage.html
+     *
+     * @param savedInstanceState
+     */
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,14 +65,18 @@ public class DirectionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_directions);
 
         Intent intent = getIntent();
-        plan = (ZooPlan) intent.getSerializableExtra("paths");
-        walker = plan.startWalker();
+        plan = (ZooPlan) intent.getSerializableExtra(Globals.MapKeys.ZOOPLAN);
+        int walkerIndex = intent.getIntExtra(Globals.MapKeys.WALKER_INDEX, 0);
+        walker = plan.new ZooWalker(walkerIndex);
+
         pf = new PathFinder(ZooData.getZooGraph(this), Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
+
         vertexInfo = ZooData.getVertexInfo(this);
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
         skipButton = findViewById(R.id.skip_button);
+        finishButton = findViewById(R.id.directions_finish_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -101,6 +111,32 @@ public class DirectionsActivity extends AppCompatActivity {
             walker.traverseForward();
             reloadDirectionsPage();
         });
+
+        finishButton.setOnClickListener(
+                view -> {
+                    Intent finishIntent = new Intent(this, SelectionActivity.class);
+                    finishIntent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<String>());
+                    startActivity(finishIntent);
+                }
+        );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        StateManager.getSingleton(this).storeDirectionsState(plan, walker.getCurrentExhibitIndex());
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (Globals.Debug.USE_BACK) {
+            Intent intent = new Intent(this, PlanActivity.class);
+            intent.putExtra(Globals.MapKeys.ZOOPLAN, plan);
+            startActivity(intent);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
 
@@ -163,6 +199,7 @@ public class DirectionsActivity extends AppCompatActivity {
         previousButton.setVisibility(walker.hasPrevious() ? View.VISIBLE : View.INVISIBLE);
         nextButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
         skipButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
+        finishButton.setVisibility((!walker.hasNext()) ? View.VISIBLE : View.INVISIBLE);
 
         directionsTitle.setText(String.format("Directions to %s",
                 vertexInfo.get(walker.getCurrentPath().getEndVertex()).name
