@@ -39,7 +39,7 @@ public class DirectionsActivity extends AppCompatActivity {
     private Button previousButton;
     private Button nextButton;
     private TextView directionsTitle;
-    private ImageButton settingsButton;
+    private Button skipButton;
 
     @VisibleForTesting
     public ZooPlan plan;
@@ -50,6 +50,7 @@ public class DirectionsActivity extends AppCompatActivity {
     private String lastVertexLocation;
     private UserTracker userTracker;
     private ReplanPrompt replanPrompt;
+    private ReplanMessageDisplay replanMessageDisplay;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -65,7 +66,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
-        settingsButton = findViewById(R.id.settings_button);
+        skipButton = findViewById(R.id.skip_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -87,6 +88,7 @@ public class DirectionsActivity extends AppCompatActivity {
         }
 
         replanPrompt = new ReplanPrompt(this);
+        replanMessageDisplay = new ReplanMessageDisplay(this);
 
         previousButton.setOnClickListener(view -> {
             replanPrompt.enablePrompt();
@@ -160,6 +162,7 @@ public class DirectionsActivity extends AppCompatActivity {
         // set visibility of previous/next buttons by hasPrevious/hasNext
         previousButton.setVisibility(walker.hasPrevious() ? View.VISIBLE : View.INVISIBLE);
         nextButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
+        skipButton.setVisibility(walker.hasNext() ? View.VISIBLE : View.INVISIBLE);
 
         directionsTitle.setText(String.format("Directions to %s",
                 vertexInfo.get(walker.getCurrentPath().getEndVertex()).name
@@ -181,13 +184,11 @@ public class DirectionsActivity extends AppCompatActivity {
      * Directions will be changed only if user is off-track.
      */
     public void reloadDirections() {
-        if (userTracker.isOffTrack()) {
-            recalculatePath();
-            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
-            if (userTracker.needsReplan()) {
+        recalculatePath();
+        dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
+        if (userTracker.isOffTrack() && userTracker.needsReplan()) {
                 Log.d("DirectionsActivity", "replan asked");
                 new ReplanPrompt(this).showPrompt();
-            }
         }
     }
 
@@ -265,4 +266,15 @@ public class DirectionsActivity extends AppCompatActivity {
         builder.show();
     }
 
+    public void onSkipButtonClicked(View view) {
+        String skippedExhibitID = walker.getNextExhibitID();
+        Log.d("DirectionsActivity", String.format("Skipped exhibit: %s", skippedExhibitID));
+        plan.remove(walker.getCurrentExhibitIndex());
+        List<String> replannableExhibits = plan.getReplannable(walker);
+        lastVertexLocation = userTracker.getClosestVertex().id;
+        ZooPlan newPlan = pf.findPath(replannableExhibits, lastVertexLocation);
+        plan.replan(walker, newPlan);
+        replanMessageDisplay.showPrompt();
+        reloadDirectionsPage();
+    }
 }

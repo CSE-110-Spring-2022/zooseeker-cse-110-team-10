@@ -184,7 +184,7 @@ public class ZooPlanTest {
     }
 
     @Test
-    public void testBriefDetailedDirections(){
+    public void testBriefDetailedDirections() {
         // written post- new json stuff, whatever whatever
         Context context = ApplicationProvider.getApplicationContext();
         Graph graph = ZooData.loadZooGraphJSON(context, Globals.ZooData.ZOO_GRAPH_PATH);

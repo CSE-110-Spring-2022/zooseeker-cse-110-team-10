@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
      * D.J
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
      * Used mainly as a source of info and template to finish an activity with a return result to the calling activity
      * D.J
      */
-    public void onBackButtonClicked(View view){
+    public void onBackButtonClicked(View view) {
         Intent intent = getIntent();
         intent.putExtra("key", isBriefDirections);
         setResult(RESULT_OK, intent);

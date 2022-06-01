@@ -97,8 +97,19 @@ public class ZooPlan implements Serializable {
             return currentIndex;
         }
 
+        public int getNextExhibitIndex() {
+            return currentIndex+1;
+        }
+
         public String getCurrentExhibitID() {
             return plan.get(currentIndex).getStartVertex();
+        }
+
+        public String getNextExhibitID() {
+            if (hasNext() == true) {
+                return plan.get(currentIndex + 1).getStartVertex();
+            }
+            return null;
         }
 
         public GraphPath<String, IdentifiedWeightedEdge> getCurrentPath() {
@@ -120,7 +131,7 @@ public class ZooPlan implements Serializable {
             List<DirectionsItem> explains = new ArrayList<>();
             Iterator<String> vs = plan.get(currentIndex).getVertexList().iterator();
             Iterator<IdentifiedWeightedEdge> es = plan.get(currentIndex).getEdgeList().iterator();
-            if(isBriefDirections){
+            if (isBriefDirections) {
                 String currentStreet = null;
                 String currentStreetStart = vs.next();
                 String currentStreetEnd = null;
@@ -226,6 +237,15 @@ public class ZooPlan implements Serializable {
      */
     public int size() {
         return plan.size();
+    }
+
+    public void remove(int skippedIndex) {
+        plan.remove(skippedIndex);
+    }
+
+    public GraphPath<String, IdentifiedWeightedEdge> get(int index) {
+        plan.get(index);
+        return plan.get(index);
     }
 
     /**
