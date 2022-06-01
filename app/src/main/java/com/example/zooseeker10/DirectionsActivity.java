@@ -209,6 +209,8 @@ public class DirectionsActivity extends AppCompatActivity {
         } else {
             if (userTracker.needsReplan()) {
                 replanPrompt.showPrompt();
+                recalculatePath();
+                dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
             } else {
                 recalculatePath();
                 dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
@@ -223,8 +225,10 @@ public class DirectionsActivity extends AppCompatActivity {
      */
     public void reloadDirections() {
         if (userTracker.isOffTrack() && userTracker.needsReplan()) {
-                Log.d("DirectionsActivity", "replan asked");
-                replanPrompt.showPrompt();
+            Log.d("DirectionsActivity", "replan asked");
+            recalculatePath();
+            replanPrompt.showPrompt();
+            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
         } else if (userTracker.isOffTrack()) {
             recalculatePath();
             dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
