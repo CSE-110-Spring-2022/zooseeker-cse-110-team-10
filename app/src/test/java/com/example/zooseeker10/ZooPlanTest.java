@@ -183,4 +183,38 @@ public class ZooPlanTest {
         }
     }
 
+    @Test
+    public void testBriefDetailedDirections(){
+        // written post- new json stuff, whatever whatever
+        Context context = ApplicationProvider.getApplicationContext();
+        Graph graph = ZooData.loadZooGraphJSON(context, Globals.ZooData.ZOO_GRAPH_PATH);
+        ZooData.loadVertexInfoJSON(context, Globals.ZooData.NODE_INFO_PATH);
+        ZooData.loadEdgeInfoJSON(context, Globals.ZooData.EDGE_INFO_PATH);
+        PathFinder pathfinder = new PathFinder(graph, Globals.ZooData.ENTRANCE_GATE_ID, Globals.ZooData.EXIT_GATE_ID);
+        ZooPlan plan = pathfinder.findPath(Arrays.asList("gorilla"));
+        List<DirectionsItem> briefList = plan.startWalker().explainPath(context, true);
+
+        assertEquals(4, briefList.size());
+
+        assertEquals("Entrance and Exit Gate", briefList.get(0).from);
+        assertEquals("Front Street / Treetops Way", briefList.get(0).to);
+        assertEquals("Gate Path", briefList.get(0).street);
+        assertEquals(1100.0, briefList.get(0).dist, DOUBLE_EPSILON);
+
+        assertEquals("Front Street / Treetops Way", briefList.get(1).from);
+        assertEquals("Treetops Way / Hippo Trail", briefList.get(1).to);
+        assertEquals("Treetops Way", briefList.get(1).street);
+        assertEquals(4400.0, briefList.get(1).dist, DOUBLE_EPSILON);
+
+        assertEquals("Treetops Way / Hippo Trail", briefList.get(2).from);
+        assertEquals("Monkey Trail / Hippo Trail", briefList.get(2).to);
+        assertEquals("Hippo Trail", briefList.get(2).street);
+        assertEquals(4500.0, briefList.get(2).dist, DOUBLE_EPSILON);
+
+        assertEquals("Monkey Trail / Hippo Trail", briefList.get(3).from);
+        assertEquals("Gorillas", briefList.get(3).to);
+        assertEquals("Monkey Trail", briefList.get(3).street);
+        assertEquals(2400.0, briefList.get(3).dist, DOUBLE_EPSILON);
+    }
+
 }
