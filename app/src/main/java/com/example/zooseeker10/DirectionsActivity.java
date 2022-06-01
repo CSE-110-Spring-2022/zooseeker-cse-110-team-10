@@ -207,10 +207,11 @@ public class DirectionsActivity extends AppCompatActivity {
         if (lastVertexLocation == null || lastVertexLocation.equals(walker.getCurrentPath().getStartVertex())) {
             dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
         } else {
-            recalculatePath();
-            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
             if (userTracker.needsReplan()) {
-                new ReplanPrompt(this).showPrompt();
+                replanPrompt.showPrompt();
+            } else {
+                recalculatePath();
+                dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
             }
         }
     }
@@ -221,11 +222,12 @@ public class DirectionsActivity extends AppCompatActivity {
      * Directions will be changed only if user is off-track.
      */
     public void reloadDirections() {
-        recalculatePath();
-        dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
         if (userTracker.isOffTrack() && userTracker.needsReplan()) {
                 Log.d("DirectionsActivity", "replan asked");
-                new ReplanPrompt(this).showPrompt();
+                replanPrompt.showPrompt();
+        } else if (userTracker.isOffTrack()) {
+            recalculatePath();
+            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
         }
     }
 
