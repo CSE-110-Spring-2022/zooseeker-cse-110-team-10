@@ -14,6 +14,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,11 +31,15 @@ import java.util.List;
 import java.util.Map;
 
 public class DirectionsActivity extends AppCompatActivity {
+    private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
+    @VisibleForTesting
+    public boolean isBriefDirections;
 
     private static final boolean listenToGPS = false;
     private Button previousButton;
     private Button nextButton;
     private TextView directionsTitle;
+    private ImageButton settingsButton;
 
     @VisibleForTesting
     public ZooPlan plan;
@@ -60,6 +65,7 @@ public class DirectionsActivity extends AppCompatActivity {
 
         previousButton = findViewById(R.id.directions_previous_button);
         nextButton = findViewById(R.id.directions_next_button);
+        settingsButton = findViewById(R.id.settings_button);
         RecyclerView recyclerView = findViewById(R.id.directions_list);
         directionsTitle = findViewById(R.id.directions_title);
 
@@ -93,7 +99,45 @@ public class DirectionsActivity extends AppCompatActivity {
             walker.traverseForward();
             reloadDirectionsPage();
         });
+    }
 
+
+    /**
+     * Citation:
+     * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+     * Sending the data back to main activity in android
+     * May 27th, 2022
+     * Used mainly as a source of info and template for opening a new activity for result
+     * D.J
+     */
+    public void onSettingsButtonClicked(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        Log.d("Settings Activity: ", "Started");
+        startActivityForResult(intent, SECOND_ACTIVITY_REQUEST_CODE);
+    }
+
+    /**
+     * Citation:
+     * https://stackoverflow.com/questions/920306/sending-data-back-to-the-main-activity-in-android
+     * Sending the data back to main activity in android
+     * May 27th, 2022
+     * Used mainly as a source of info and template for retrieving data from a finished activity
+     * D.J
+     */
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SECOND_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                setIsBriefDirections(data.getBooleanExtra("key", false));
+            }
+        }
+    }
+
+    @VisibleForTesting
+    public void setIsBriefDirections(boolean isBriefDirections) {
+        this.isBriefDirections = isBriefDirections;
+        dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
     }
 
     /**
@@ -121,10 +165,10 @@ public class DirectionsActivity extends AppCompatActivity {
                 vertexInfo.get(walker.getCurrentPath().getEndVertex()).name
         ));
         if (lastVertexLocation == null || lastVertexLocation.equals(walker.getCurrentPath().getStartVertex())) {
-            dLAdapter.setDirectionsItems(walker.explainPath(this));
+            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
         } else {
             recalculatePath();
-            dLAdapter.setDirectionsItems(walker.explainPath(this));
+            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
             if (userTracker.needsReplan()) {
                 new ReplanPrompt(this).showPrompt();
             }
@@ -139,7 +183,7 @@ public class DirectionsActivity extends AppCompatActivity {
     public void reloadDirections() {
         if (userTracker.isOffTrack()) {
             recalculatePath();
-            dLAdapter.setDirectionsItems(walker.explainPath(this));
+            dLAdapter.setDirectionsItems(walker.explainPath(this, isBriefDirections));
             if (userTracker.needsReplan()) {
                 Log.d("DirectionsActivity", "replan asked");
                 new ReplanPrompt(this).showPrompt();
