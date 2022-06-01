@@ -2,7 +2,6 @@ package com.example.zooseeker10;
 
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.Intent;
 import android.util.Log;
 
 import java.io.File;
@@ -11,33 +10,42 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Manages persistence of application state
  */
 public class StateManager {
-    private static final File directory;
-    private static final File stateFile;
-    private static final File mainFile;
-    private static final File planFile;
-    private static final File directionsFile;
+    private final File directory;
+    private final File stateFile;
+    private final File selectionFile;
+    private final File planFile;
+    private final File directionsFile;
 
-    static
-    {
-        ContextWrapper contextWrapper = new ContextWrapper(Globals.State.activity);
-        directory = contextWrapper.getDir(Globals.State.DIRECTORY_PATH, Context.MODE_PRIVATE);
+    private static StateManager stateManager;
+
+    public static StateManager getSingleton() {
+        return stateManager;
+    }
+
+    public static StateManager getSingleton(Context context) {
+        if (stateManager == null) {
+            stateManager = new StateManager(context);
+        }
+        return stateManager;
+    }
+
+    private StateManager(Context context) {
+        directory = context.getDir(Globals.State.DIRECTORY_PATH, Context.MODE_PRIVATE);
 
         stateFile = new File(directory, Globals.State.ACTIVE_STATE_FILENAME);
-        mainFile = new File(directory, Globals.State.MAIN_FILENAME);
+        selectionFile = new File(directory, Globals.State.SELECTION_FILENAME);
         planFile = new File(directory, Globals.State.PLAN_FILENAME);
         directionsFile = new File(directory, Globals.State.DIRECTIONS_FILENAME);
     }
 
-    public static boolean isCleanStart() {
+    public boolean isCleanStart() {
         boolean isCleanStart = !stateFile.exists();
 
         if (isCleanStart) {
@@ -56,24 +64,24 @@ public class StateManager {
     }
 
     /* store<xActivity>State() should be used in the onStop() methods of <xActivity> */
-    public static void storeSelectionState(SelectedExhibits exhibits) {
+    public void storeSelectionState(SelectedExhibits exhibits) {
         storeMapToFile(stateFile,
-                                   Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Main));
-        storeMapToFile(mainFile,
+                                   Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Selection));
+        storeMapToFile(selectionFile,
                                    Map.of(Globals.MapKeys.SELECTED_EXHIBIT_IDS, exhibits.getExhibitIds()));
 
         Log.d("StateManager", "Stored to MainActivity file: "
                 + Arrays.toString(exhibits.getExhibitIds().toArray()));
     }
 
-    public static void storePlanState(ZooPlan plan) {
+    public void storePlanState(ZooPlan plan) {
         storeMapToFile(stateFile,
                                    Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Plan));
         storeMapToFile(planFile,
                                    Map.of(Globals.MapKeys.ZOOPLAN, plan));
     }
 
-    public static void storeDirectionsState(ZooPlan plan, int walkerIndex) {
+    public void storeDirectionsState(ZooPlan plan, int walkerIndex) {
         storeMapToFile(stateFile,
                                    Map.of(Globals.MapKeys.STATE, Globals.State.ActiveState.Directions));
         storeMapToFile(directionsFile,
@@ -87,7 +95,7 @@ public class StateManager {
      * @param state the activity map to load
      * @return a map of the activity's respective state variables
      */
-    public static Map<String, Object> getActivityMap(Globals.State.ActiveState state) {
+    public Map<String, Object> getActivityMap(Globals.State.ActiveState state) {
         File file = getFile(state);
 
         if (!file.exists()) {
@@ -103,12 +111,12 @@ public class StateManager {
      * @param state current activity
      * @return file corresponding to the passed in state
      */
-    private static File getFile(Globals.State.ActiveState state) {
+    private File getFile(Globals.State.ActiveState state) {
         switch (state) {
             case Trampoline:
                 return stateFile;
-            case Main:
-                return mainFile;
+            case Selection:
+                return selectionFile;
             case Plan:
                 return planFile;
             case Directions:

@@ -33,8 +33,8 @@ public class PlanActivity extends AppCompatActivity {
         if (intent.hasExtra(Globals.MapKeys.ZOOPLAN)) {
             plan = (ZooPlan) intent.getSerializableExtra(Globals.MapKeys.ZOOPLAN);
         }
-        else if (intent.hasExtra("exhibits")) {
-            ArrayList<String> exhibits = intent.getStringArrayListExtra("exhibits");
+        else if (intent.hasExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS)) {
+            ArrayList<String> exhibits = intent.getStringArrayListExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS);
             plan = generatePlan(exhibits);
         }
         else {
@@ -66,7 +66,7 @@ public class PlanActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        StateManager.storePlanState(plan);
+        StateManager.getSingleton(this).storePlanState(plan);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class PlanActivity extends AppCompatActivity {
     }
 
     public void onRestartPlanButtonClicked(View view) {
-        StateManager.storeSelectionState(new SelectedExhibits(Globals.State.activity));
+        StateManager.getSingleton().storeSelectionState(new SelectedExhibits(this, () -> {}));
         Intent intent = new Intent(this, SelectionActivity.class);
         intent.putExtra(Globals.MapKeys.SELECTED_EXHIBIT_IDS, new ArrayList<>());
         startActivity(intent);

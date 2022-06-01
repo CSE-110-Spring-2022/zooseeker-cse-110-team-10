@@ -85,8 +85,7 @@ public class DirectionsActivity extends AppCompatActivity {
             var locationListener = new LocationListener() {
                 @Override
                 public void onLocationChanged(@NonNull Location location) {
-//                    Log.d("DirectionsActivity", String.format("Location changed: %s", location));
-//
+                    Log.d("DirectionsActivity", String.format("Location changed: %s", location));
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     userTracker.setUserLocation(currentLocation);
                     lastVertexLocation = userTracker.getClosestVertex().id;
@@ -140,7 +139,7 @@ public class DirectionsActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        StateManager.storeDirectionsState(plan, walker.getCurrentExhibitIndex());
+        StateManager.getSingleton(this).storeDirectionsState(plan, walker.getCurrentExhibitIndex());
     }
 
     @Override

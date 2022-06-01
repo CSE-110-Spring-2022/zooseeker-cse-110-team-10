@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 public class SelectedExhibits {
 
     private final Context context;
+    private final SelectedExhibitsObserver observer;
     private ArrayList<String> selectedExhibitIds;
 
-    public SelectedExhibits(Context context) {
+    public SelectedExhibits(Context context, SelectedExhibitsObserver observer) {
         this.context = context;
+        this.observer = observer;
         this.selectedExhibitIds = new ArrayList<>();
     }
 
@@ -22,7 +24,7 @@ public class SelectedExhibits {
         if (!selectedExhibitIds.contains(exhibitId)) {
             selectedExhibitIds.add(0, exhibitId);
             Log.d("MainActivity", exhibitId);
-            ((SelectionActivity) context).update();
+            observer.onSelectedExhibitsUpdated();
         }
     }
 
@@ -30,7 +32,7 @@ public class SelectedExhibits {
         return this.selectedExhibitIds;
     }
 
-    public List<ZooData.VertexInfo> getExhibitIDs() {
+    public List<ZooData.VertexInfo> getExhibits() {
             Map<String, ZooData.VertexInfo> exhibits = ZooData.getVertexInfo(context);
             return this.selectedExhibitIds.stream()
                     .map(exhibits::get)
@@ -44,6 +46,6 @@ public class SelectedExhibits {
     public void clear() {
         this.selectedExhibitIds = new ArrayList<>();
         Log.d("MainActivity", "CLEARED");
-        ((SelectionActivity) context).update();
+        observer.onSelectedExhibitsUpdated();
     }
 }

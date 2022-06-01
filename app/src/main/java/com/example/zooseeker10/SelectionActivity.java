@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class SelectionActivity extends AppCompatActivity {
+public class SelectionActivity extends AppCompatActivity implements SelectedExhibitsObserver {
     private static final int SECOND_ACTIVITY_REQUEST_CODE = 0;
     private final PermissionChecker permissionChecker = new PermissionChecker(this);
 
@@ -30,7 +30,7 @@ public class SelectionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        selectedExhibits = new SelectedExhibits(this);
+        selectedExhibits = new SelectedExhibits(this, this);
 
         /* Permissions Setup */
         permissionChecker.ensurePermissions();
@@ -52,14 +52,14 @@ public class SelectionActivity extends AppCompatActivity {
             selectedExhibits.addExhibit(exhibit);
         }
 
-        update();
+        onSelectedExhibitsUpdated();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        StateManager.storeSelectionState(selectedExhibits);
+        StateManager.getSingleton(this).storeSelectionState(selectedExhibits);
     }
 
     @Override
@@ -119,8 +119,9 @@ public class SelectionActivity extends AppCompatActivity {
         }
     }
 
-    public void update() {
-            adapter.setSelectedExhibits(this.selectedExhibits.getExhibitIDs());
+    @Override
+    public void onSelectedExhibitsUpdated() {
+            adapter.setSelectedExhibits(this.selectedExhibits.getExhibits());
             if (this.selectedExhibits.getCount() > 0) {
                 planButton.setVisibility(View.VISIBLE);
             } else {
@@ -133,7 +134,5 @@ public class SelectionActivity extends AppCompatActivity {
 
     public void onDeleteButtonClicked(View view) {
         selectedExhibits.clear();
-        exhibitsCountView.setText("(" + selectedExhibits.getCount() + ")");
-        update();
     }
 }
